@@ -11,6 +11,7 @@ async function connect() {
     connectTimeoutMS: 8000,
     socketTimeoutMS: 30000,
     maxPoolSize: 1,
+    tlsInsecure: true,
   });
   await client.connect();
   _db = client.db('masss_catalog');
