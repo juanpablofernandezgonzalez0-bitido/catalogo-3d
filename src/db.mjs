@@ -1,81 +1,97 @@
-import { MongoClient } from 'mongodb';
+const DATA_API_URL = process.env.MONGODB_DATA_API_URL;
+const API_KEY = process.env.MONGODB_API_KEY;
+const DATA_SOURCE = 'Cluster0';
+const DB = 'masss_catalog';
 
-let client;
-let _db;
-
-async function connect() {
-  if (_db) return _db;
-  const uri = process.env.MONGODB_URI || '';
-  client = new MongoClient(uri, {
-    serverSelectionTimeoutMS: 10000,
-    connectTimeoutMS: 10000,
-    socketTimeoutMS: 30000,
-    maxPoolSize: 1,
-    family: 4,
+async function api(action, body) {
+  const res = await fetch(`${DATA_API_URL}/action/${action}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'api-key': API_KEY,
+    },
+    body: JSON.stringify({ dataSource: DATA_SOURCE, database: DB, ...body }),
   });
-  await client.connect();
-  _db = client.db('masss_catalog');
-  return _db;
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Data API error (${res.status}): ${text.slice(0, 200)}`);
+  }
+  return res.json();
 }
 
 export async function getProducts() {
-  const db = await connect();
-  return db.collection('products').find().sort({ order: 1 }).toArray();
+  const { documents } = await api('find', {
+    collection: 'products',
+    filter: {},
+    sort: { order: 1 },
+  });
+  return documents;
 }
 
 export async function getProduct(id) {
-  const db = await connect();
-  return db.collection('products').findOne({ id });
+  const { document } = await api('findOne', {
+    collection: 'products',
+    filter: { id },
+  });
+  return document;
 }
 
 export async function createProduct(data) {
-  const db = await connect();
-  const maxOrder = await db.collection('products')
-    .find().sort({ order: -1 }).limit(1).toArray()
-    .then(r => r.length ? r[0].order : -1);
+  const products = await getProducts();
+  const maxOrder = products.length ? Math.max(...products.map(p => p.order ?? -1)) : -1;
   const product = { id: Date.now().toString(36), order: maxOrder + 1, ...data };
-  await db.collection('products').insertOne(product);
+  await api('insertOne', { collection: 'products', document: product });
   return product;
 }
 
 export async function updateProduct(id, data) {
-  const db = await connect();
-  const result = await db.collection('products').findOneAndUpdate(
-    { id },
-    { $set: data },
-    { returnDocument: 'after' }
-  );
-  return result;
+  await api('updateOne', {
+    collection: 'products',
+    filter: { id },
+    update: { $set: data },
+  });
+  const { document } = await api('findOne', {
+    collection: 'products',
+    filter: { id },
+  });
+  return document;
 }
 
 export async function deleteProduct(id) {
-  const db = await connect();
-  await db.collection('products').deleteOne({ id });
+  await api('deleteOne', { collection: 'products', filter: { id } });
 }
 
 export async function reorderProducts(orderedIds) {
-  const db = await connect();
-  const bulk = db.collection('products').initializeUnorderedBulkOp();
-  orderedIds.forEach((id, i) => {
-    bulk.find({ id }).updateOne({ $set: { order: i } });
+  await api('updateMany', {
+    collection: 'products',
+    filter: {},
+    update: { $set: { order: -1 } },
   });
-  await bulk.execute();
+  for (let i = 0; i < orderedIds.length; i++) {
+    await api('updateOne', {
+      collection: 'products',
+      filter: { id: orderedIds[i] },
+      update: { $set: { order: i } },
+    });
+  }
 }
 
 export async function getDecoracion() {
-  const db = await connect();
-  const doc = await db.collection('decoracion').findOne({ _id: 'config' });
-  if (!doc) return { hero: '', banner1: '', banner2: '' };
-  const { _id, ...rest } = doc;
+  const { document } = await api('findOne', {
+    collection: 'decoracion',
+    filter: { _id: 'config' },
+  });
+  if (!document) return { hero: '', banner1: '', banner2: '' };
+  const { _id, ...rest } = document;
   return rest;
 }
 
 export async function saveDecoracion(data) {
-  const db = await connect();
-  await db.collection('decoracion').updateOne(
-    { _id: 'config' },
-    { $set: data },
-    { upsert: true }
-  );
+  await api('updateOne', {
+    collection: 'decoracion',
+    filter: { _id: 'config' },
+    update: { $set: data },
+    upsert: true,
+  });
   return data;
 }
