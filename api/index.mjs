@@ -100,4 +100,15 @@ app.get('/api/config', (req, res) => {
   });
 });
 
+app.get('/api/health', async (req, res) => {
+  try {
+    const { getProducts } = await import('../src/db.mjs');
+    const start = Date.now();
+    const products = await getProducts();
+    res.json({ status: 'ok', latency: Date.now() - start, products: products.length });
+  } catch (e) {
+    res.status(500).json({ status: 'error', message: e.message });
+  }
+});
+
 export default app;

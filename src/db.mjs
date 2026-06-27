@@ -1,6 +1,9 @@
 import { MongoClient } from 'mongodb';
 
-const uri = process.env.MONGODB_URI;
+const BASE_URI = process.env.MONGODB_URI || '';
+const uri = BASE_URI.includes('?')
+  ? BASE_URI + '&retryWrites=true&w=majority'
+  : BASE_URI + '?retryWrites=true&w=majority';
 let client;
 let _db;
 
