@@ -7,6 +7,15 @@ import {
 const app = express();
 app.use(express.json({ limit: '10mb' }));
 
+// Global timeout for serverless
+app.use((req, res, next) => {
+  const timeout = setTimeout(() => {
+    res.status(504).json({ error: 'Timeout - el servidor tardó demasiado' });
+  }, 8500);
+  res.on('close', () => clearTimeout(timeout));
+  next();
+});
+
 app.get('/api/products', async (req, res) => {
   try {
     const data = await getProducts();

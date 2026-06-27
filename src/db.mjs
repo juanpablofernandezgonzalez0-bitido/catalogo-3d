@@ -6,7 +6,12 @@ let _db;
 
 async function connect() {
   if (_db) return _db;
-  client = new MongoClient(uri);
+  client = new MongoClient(uri, {
+    serverSelectionTimeoutMS: 8000,
+    connectTimeoutMS: 8000,
+    socketTimeoutMS: 30000,
+    maxPoolSize: 1,
+  });
   await client.connect();
   _db = client.db('masss_catalog');
   return _db;
