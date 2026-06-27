@@ -1,0 +1,322 @@
+[
+  {
+    "id": "shampoo",
+    "name": "Shampoo 500 ML",
+    "category": "producto",
+    "desc": "Elaborado a base de 7 plantas naturales. Ideal para fortalecer el cabello desde la raíz.",
+    "images": [
+      "/Fotos/Shampoo.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "Presentación 500 ML",
+        "price": 32000
+      }
+    ],
+    "order": 0
+  },
+  {
+    "id": "acondicionador",
+    "name": "Acondicionador 500 ML",
+    "category": "producto",
+    "desc": "Brinda extra suavidad, hidrata y protege la cutícula capilar. Deja el cabello sedoso y brillante.",
+    "images": [
+      "/Fotos/Acondicionador.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "Presentación 500 ML",
+        "price": 33000
+      }
+    ],
+    "order": 1
+  },
+  {
+    "id": "hydros",
+    "name": "Hydros Natural",
+    "category": "producto",
+    "desc": "A base de semilla de lino. Hidrata, define y da manejabilidad al cabello.",
+    "images": [
+      "/Fotos/Hydros.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "Presentación 500 ML",
+        "price": 20000
+      }
+    ],
+    "order": 2
+  },
+  {
+    "id": "nutrir",
+    "name": "Nutri'R",
+    "category": "producto",
+    "desc": "Fortalce el folículo piloso y reduce el crecimiento de canas.",
+    "images": [
+      "/Fotos/NutriR.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "Presentación 250 ml",
+        "price": 22000
+      }
+    ],
+    "order": 3
+  },
+  {
+    "id": "mqvltff8",
+    "name": "Shampoo 1000 ML",
+    "category": "producto",
+    "desc": "Elaborado a base de 7 plantas naturales. Ideal para fortalecer el cabello desde la raíz.",
+    "images": [
+      "/fotos/shampoo1.jpg"
+    ],
+    "prices": [
+      {
+        "label": "Presentación 1000 ML",
+        "price": 67000
+      }
+    ],
+    "order": 4
+  },
+  {
+    "id": "mqvly73r",
+    "name": "Acondicionador 250 ML",
+    "category": "producto",
+    "desc": "Brinda extra suavidad, hidrata y protege la cutícula capilar. Deja el cabello sedoso y brillante.",
+    "images": [
+      "/fotos/shampo.jpg"
+    ],
+    "prices": [
+      {
+        "label": "Presentación 250 ML",
+        "price": 17000
+      }
+    ],
+    "order": 5
+  },
+  {
+    "id": "mqvm3sf9",
+    "name": "Hydros 1000 ML",
+    "category": "producto",
+    "desc": "Hidrata, define y da manejabilidad al cabello.",
+    "images": [
+      "/fotos/imagen.jpg"
+    ],
+    "prices": [
+      {
+        "label": "Presentación 1000 ML",
+        "price": 28000
+      }
+    ],
+    "order": 6
+  },
+  {
+    "id": "aloper",
+    "name": "Aloper",
+    "category": "producto",
+    "desc": "Aceite especial contra la alopecia. Fortalece, nutre y revitaliza desde la raíz.",
+    "images": [
+      "/Fotos/Aloper.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "60 ml",
+        "price": 38000
+      }
+    ],
+    "order": 7
+  },
+  {
+    "id": "revital",
+    "name": "Revital",
+    "category": "producto",
+    "desc": "Combate caspa, hongos y psoriasis. Equilibra el cuero cabelludo.",
+    "images": [
+      "/Fotos/Revital.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "120 ml",
+        "price": 12000
+      }
+    ],
+    "order": 8
+  },
+  {
+    "id": "kit-viajero",
+    "name": "Shampoo Viajero",
+    "category": "viajero",
+    "desc": "Shampoo mas pequeño ideal para viajes.",
+    "images": [
+      "/Fotos/VIAJERO1.jpg"
+    ],
+    "prices": [
+      {
+        "label": "Shampoo Viajero 120 ML",
+        "price": 13000
+      }
+    ],
+    "order": 9
+  },
+  {
+    "id": "revid",
+    "name": "Revid",
+    "category": "producto",
+    "desc": "Hidrata, repara y nutre cabellos con falta de proteína. Recupera fuerza y brillo.",
+    "images": [
+      "/Fotos/Revid.jpg"
+    ],
+    "prices": [
+      {
+        "label": "250 ml",
+        "price": 16000
+      }
+    ],
+    "order": 10
+  },
+  {
+    "id": "gorro-satin",
+    "name": "Gorro pequeño",
+    "category": "accesorio",
+    "desc": "Protege tu cabello mientras duermes, reduciendo fricción y resequedad.",
+    "images": [
+      "/Fotos/Accesorio4.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "Gorro Pequeño",
+        "price": 20000
+      }
+    ],
+    "order": 11
+  },
+  {
+    "id": "funda-satin",
+    "name": "Gorro Grande",
+    "category": "accesorio",
+    "desc": "Protege tu cabello mientras duermes, reduciendo fricción y resequedad.",
+    "images": [
+      "/Fotos/Accesorio5.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "Gorro Grande",
+        "price": 25000
+      }
+    ],
+    "order": 12
+  },
+  {
+    "id": "mqsvg880",
+    "name": "Flores",
+    "category": "accesorio",
+    "desc": "Flor para decorar tu look.",
+    "images": [
+      "/fotos/Accesorio2.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "Flores",
+        "price": 3000
+      }
+    ],
+    "order": 13
+  },
+  {
+    "id": "mqsw1vwv",
+    "name": "Acondicionador Viajero",
+    "category": "viajero",
+    "desc": "Acondicionador mas pequeño ideal para viajes.",
+    "images": [
+      "/fotos/VIAJERO3.jpg"
+    ],
+    "prices": [
+      {
+        "label": "Acondicionador Viajero 120 ML",
+        "price": 13000
+      }
+    ],
+    "order": 14
+  },
+  {
+    "id": "mqsw6coo",
+    "name": "Hydros Viajero",
+    "category": "viajero",
+    "desc": "Hydros mas pequeño ideal para viajes.",
+    "images": [
+      "/fotos/VIAJERO.jpg"
+    ],
+    "prices": [
+      {
+        "label": "Hydros Viajero 120 ML",
+        "price": 13000
+      }
+    ],
+    "order": 15
+  },
+  {
+    "id": "mqswn17v",
+    "name": "Atomizador Pequeño",
+    "category": "accesorio",
+    "desc": "Atomizador para tu uso.",
+    "images": [
+      "/fotos/Accesorio6.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "Atomizador 500 ML",
+        "price": 18000
+      }
+    ],
+    "order": 16
+  },
+  {
+    "id": "mqswss23",
+    "name": "Atomizador Grande",
+    "category": "accesorio",
+    "desc": "Atomizador grande para tu uso.",
+    "images": [
+      "/fotos/Accesorio3.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "Atomizador 1000 ML",
+        "price": 20000
+      }
+    ],
+    "order": 17
+  },
+  {
+    "id": "mqsww3ui",
+    "name": "Masajeador Capilar",
+    "category": "accesorio",
+    "desc": "Masajeador para el cabello.",
+    "images": [
+      "/fotos/Accesorio.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "Masajeador",
+        "price": 7000
+      }
+    ],
+    "order": 18
+  },
+  {
+    "id": "mqswxunn",
+    "name": "Cepillo",
+    "category": "accesorio",
+    "desc": "Cepillo para tu cabello.",
+    "images": [
+      "/fotos/Accesorio1.jpeg"
+    ],
+    "prices": [
+      {
+        "label": "Cepillo",
+        "price": 6000
+      }
+    ],
+    "order": 19
+  }
+]

@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — MASSS CABELLOS</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #fcf4f7;
+      color: #1a1a1a;
+      padding: 2rem;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    .header h1 { color: #c98797; font-size: 1.8rem; }
+    .header a { color: #c98797; text-decoration: none; font-size: 0.9rem; }
+    .btn {
+      background: #c98797;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-danger { background: #c62828; }
+    .btn-secondary { background: #888; }
+    .deco-section {
+      background: #fff;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .deco-section h2 {
+      font-size: 1.2rem;
+      color: #c98797;
+      margin-bottom: 1rem;
+    }
+    .deco-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .deco-card {
+      background: #fcf4f7;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+    .deco-card label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+    .deco-card img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      background: #eee;
+      display: block;
+    }
+    .productos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .card img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      display: block;
+    }
+    .card-body { padding: 1rem; }
+    .card-body h3 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+    .card-body p { color: #555; font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .card-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(0,0,0,0.4);
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal h2 { margin-bottom: 1rem; color: #d63384; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label {
+      display: block; font-weight: 600; font-size: 0.85rem;
+      margin-bottom: 0.3rem; color: #555;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%; padding: 0.6rem; border: 1px solid #ddd;
+      border-radius: 8px; font-family: inherit; font-size: 0.95rem;
+    }
+    .form-group textarea { min-height: 80px; resize: vertical; }
+    .price-row {
+      display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: center;
+    }
+    .price-row input { flex: 1; }
+    .price-row .btn-small {
+      background: #c62828; color: #fff; border: none;
+      width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-weight: 700;
+    }
+    .modal-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <h1>Panel de Administración</h1>
+      <a href="/" target="_blank">Ver catálogo →</a>
+    </div>
+    <button class="btn" onclick="openEditor()">+ Nuevo Producto</button>
+  </div>
+
+  <div class="deco-section">
+    <h2>Imágenes de decoración</h2>
+    <div class="deco-grid">
+      <div class="deco-card">
+        <label>Hero (portada)</label>
+        <img id="deco-hero-preview" src="" alt="">
+        <div style="display:flex;gap:0.5rem">
+          <input type="text" id="deco-hero" placeholder="/decorar/imagen.jpg" style="flex:1;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem" oninput="previewDeco('hero')">
+          <button class="btn btn-secondary" style="font-size:0.8rem;padding:0.3rem 0.6rem" onclick="uploadDeco('hero')">Subir</button>
+        </div>
+      </div>
+      <div class="deco-card">
+        <label>Banner 1 (entre Productos y Kit Viajero)</label>
+        <img id="deco-banner1-preview" src="" alt="">
+        <div style="display:flex;gap:0.5rem">
+          <input type="text" id="deco-banner1" placeholder="/decorar/imagen.jpg" style="flex:1;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem" oninput="previewDeco('banner1')">
+          <button class="btn btn-secondary" style="font-size:0.8rem;padding:0.3rem 0.6rem" onclick="uploadDeco('banner1')">Subir</button>
+        </div>
+      </div>
+      <div class="deco-card">
+        <label>Banner 2 (entre Kit Viajero y Accesorios)</label>
+        <img id="deco-banner2-preview" src="" alt="">
+        <div style="display:flex;gap:0.5rem">
+          <input type="text" id="deco-banner2" placeholder="/decorar/imagen.jpg" style="flex:1;padding:0.4rem;border:1px solid #ddd;border-radius:6px;font-size:0.85rem" oninput="previewDeco('banner2')">
+          <button class="btn btn-secondary" style="font-size:0.8rem;padding:0.3rem 0.6rem" onclick="uploadDeco('banner2')">Subir</button>
+        </div>
+      </div>
+    </div>
+    <button class="btn" onclick="saveDeco()" style="margin-top:1rem">Guardar cambios</button>
+    <span id="deco-status" style="font-size:0.85rem;color:#888;margin-left:1rem"></span>
+  </div>
+
+  <div class="productos-grid" id="grid"></div>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2 id="modal-title">Editar Producto</h2>
+      <input type="hidden" id="edit-id">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input id="edit-name" placeholder="Nombre del producto">
+      </div>
+      <div class="form-group">
+        <label>Categoría (sección)</label>
+        <select id="edit-category" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.95rem;background:#fff">
+          <option value="producto">Productos</option>
+          <option value="viajero">Kit Viajero</option>
+          <option value="accesorio">Accesorios</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Descripción</label>
+        <textarea id="edit-desc" placeholder="Descripción del producto"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Imágenes</label>
+        <div id="images-container" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem"></div>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <input type="text" id="edit-image-url" placeholder="/Fotos/producto.jpg" style="flex:1;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.9rem">
+          <button class="btn btn-secondary" style="font-size:0.8rem;padding:0.4rem 0.8rem" onclick="addImageUrl()">+ Agregar</button>
+        </div>
+        <div style="margin-top:0.5rem;display:flex;gap:0.5rem;align-items:center">
+          <input type="file" accept="image/*" multiple id="file-input" style="font-size:0.85rem;flex:1">
+          <button class="btn btn-secondary" style="font-size:0.8rem;padding:0.4rem 0.8rem" onclick="uploadImages()">Subir</button>
+          <span id="upload-status" style="font-size:0.8rem;color:#888"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Precios</label>
+        <div id="prices-container"></div>
+        <button class="btn btn-secondary" style="margin-top:0.5rem;font-size:0.85rem;padding:0.4rem 0.8rem" onclick="addPrice()">+ Agregar precio</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="saveProduct()">Guardar</button>
+        <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-danger" id="delete-btn" style="margin-left:auto" onclick="deleteProduct()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let products = [];
+    let cloudName = '';
+    let uploadPreset = '';
+
+    async function loadProducts() {
+      const [prodRes, configRes] = await Promise.all([
+        fetch('/api/products'),
+        fetch('/api/config')
+      ]);
+      products = await prodRes.json();
+      const cfg = await configRes.json();
+      cloudName = cfg.cloudinaryCloudName;
+      uploadPreset = cfg.cloudinaryUploadPreset;
+      render();
+    }
+
+    function render() {
+      const grid = document.getElementById('grid');
+      const sections = [
+        { key: 'producto', label: 'Productos', color: '#c98797' },
+        { key: 'viajero', label: 'Kit Viajero', color: '#a0c4a0' },
+        { key: 'accesorio', label: 'Accesorios', color: '#b8a0c4' },
+      ];
+      const catColor = { producto: '#c98797', viajero: '#a0c4a0', accesorio: '#b8a0c4' };
+      const catLabel = { producto: 'Producto', viajero: 'Kit Viajero', accesorio: 'Accesorio' };
+      grid.innerHTML = sections.map(s => {
+        const items = products.filter(p => p.category === s.key);
+        if (!items.length) return '';
+        return `
+          <div style="grid-column:1/-1;margin:1rem 0 0.5rem 0">
+            <h2 style="color:${s.color};font-size:1.3rem;display:flex;align-items:center;gap:0.5rem">
+              ${s.label}
+              <span style="font-size:0.8rem;font-weight:400;color:#999">(${items.length})</span>
+            </h2>
+            <hr style="border:none;border-top:2px solid ${s.color}20;margin-top:0.3rem">
+          </div>
+          ${items.map(p => {
+            const imgs = Array.isArray(p.images) ? p.images : [p.image || p.images || ''];
+            return `
+            <div class="card">
+              <img src="${imgs[0]}" alt="${p.name}" loading="lazy">
+              <div class="card-body">
+                <div style="display:flex;gap:0.4rem;align-items:center;margin-bottom:0.3rem">
+                  <span style="font-size:0.65rem;font-weight:600;text-transform:uppercase;padding:0.15rem 0.5rem;border-radius:100px;background:${s.color};color:#fff">${catLabel[p.category]}</span>
+                </div>
+                <h3>${p.name}</h3>
+                <p>${p.desc}</p>
+                <div style="font-size:0.75rem;color:#999;margin-bottom:0.3rem">${imgs.length} foto(s)</div>
+                <div style="font-size:0.85rem;color:${s.color};font-weight:700">
+                  ${p.prices.map(pr => `<div>${pr.label}: $${pr.price.toLocaleString('es-CO')}</div>`).join('')}
+                </div>
+                <div class="card-actions">
+                  <button class="btn" style="padding:0.4rem 0.8rem;font-size:0.85rem" onclick="openEditor('${p.id}')">Editar</button>
+                  <button class="btn" style="padding:0.4rem 0.8rem;font-size:0.85rem;background:#e0e0e0;color:#333" onclick="duplicateProduct('${p.id}')">Duplicar</button>
+                  <div style="display:flex;gap:0.3rem;margin-left:auto">
+                    <button style="width:28px;height:28px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:14px;line-height:1" onclick="moveProduct('${p.id}','up')" title="Subir">↑</button>
+                    <button style="width:28px;height:28px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:14px;line-height:1" onclick="moveProduct('${p.id}','down')" title="Bajar">↓</button>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+          }).join('')}`;
+      }).join('');
+    }
+
+    let currentImages = [];
+
+    function openEditor(id) {
+      const modal = document.getElementById('modal');
+      modal.classList.add('active');
+      const delBtn = document.getElementById('delete-btn');
+      if (id) {
+        const p = products.find(x => x.id === id);
+        document.getElementById('modal-title').textContent = 'Editar Producto';
+        document.getElementById('edit-id').value = p.id;
+        document.getElementById('edit-name').value = p.name;
+        document.getElementById('edit-category').value = p.category || 'producto';
+        document.getElementById('edit-desc').value = p.desc;
+        currentImages = Array.isArray(p.images) ? [...p.images] : [p.image || p.images || ''].filter(Boolean);
+        renderImageThumbs();
+        renderPrices(p.prices);
+        delBtn.style.display = 'block';
+      } else {
+        document.getElementById('modal-title').textContent = 'Nuevo Producto';
+        document.getElementById('edit-id').value = '';
+        document.getElementById('edit-name').value = '';
+        document.getElementById('edit-category').value = 'producto';
+        document.getElementById('edit-desc').value = '';
+        currentImages = [];
+        renderImageThumbs();
+        renderPrices([{ label: '', price: 0 }]);
+        delBtn.style.display = 'none';
+      }
+      document.getElementById('upload-status').textContent = '';
+      document.getElementById('file-input').value = '';
+      document.getElementById('edit-image-url').value = '';
+    }
+
+    function duplicateProduct(id) {
+      const p = products.find(x => x.id === id);
+      if (!p) return;
+      openEditor();
+      document.getElementById('edit-name').value = p.name + ' (copia)';
+      document.getElementById('edit-category').value = p.category || 'producto';
+      document.getElementById('edit-desc').value = p.desc;
+      currentImages = Array.isArray(p.images) ? [...p.images] : [p.image || ''].filter(Boolean);
+      renderImageThumbs();
+      renderPrices(p.prices);
+      document.getElementById('delete-btn').style.display = 'none';
+    }
+
+    async function moveProduct(id, dir) {
+      const idx = products.findIndex(p => p.id === id);
+      if (idx === -1) return;
+      const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+      if (swapIdx < 0 || swapIdx >= products.length) return;
+      const ids = products.map(p => p.id);
+      [ids[idx], ids[swapIdx]] = [ids[swapIdx], ids[idx]];
+      const res = await fetch('/api/products/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds: ids }),
+      });
+      if (res.ok) loadProducts();
+    }
+
+    function renderImageThumbs() {
+      const container = document.getElementById('images-container');
+      container.innerHTML = currentImages.map((url, i) => `
+        <div style="position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;border:1px solid #ddd;flex-shrink:0">
+          <img src="${url}" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%2250%22 x=%2250%22 font-size=%2212%22 text-anchor=%22middle%22>Error</text></svg>'">
+          <button style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;border:none;font-size:12px;line-height:20px;text-align:center;cursor:pointer;padding:0" onclick="removeImage(${i})">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function addImageUrl() {
+      const input = document.getElementById('edit-image-url');
+      const url = input.value.trim();
+      if (!url) return;
+      currentImages.push(url);
+      renderImageThumbs();
+      input.value = '';
+    }
+
+    function removeImage(idx) {
+      currentImages.splice(idx, 1);
+      renderImageThumbs();
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    function renderPrices(prices) {
+      const container = document.getElementById('prices-container');
+      container.innerHTML = prices.map((pr, i) => `
+        <div class="price-row">
+          <input class="price-label" placeholder="Ej: 250 ml" value="${pr.label}">
+          <input class="price-value" type="number" placeholder="Precio" value="${pr.price}">
+          <button class="btn-small" onclick="removePrice(this)">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function addPrice() {
+      const container = document.getElementById('prices-container');
+      const div = document.createElement('div');
+      div.className = 'price-row';
+      div.innerHTML = '<input class="price-label" placeholder="Ej: 250 ml"><input class="price-value" type="number" placeholder="Precio"><button class="btn-small" onclick="removePrice(this)">✕</button>';
+      container.appendChild(div);
+    }
+
+    function removePrice(btn) {
+      btn.parentElement.remove();
+    }
+
+    async function saveProduct() {
+      const id = document.getElementById('edit-id').value;
+      const name = document.getElementById('edit-name').value.trim();
+      const category = document.getElementById('edit-category').value;
+      const desc = document.getElementById('edit-desc').value.trim();
+
+      if (!name || !desc || currentImages.length === 0) {
+        alert('Completa todos los campos y agrega al menos una imagen');
+        return;
+      }
+
+      const priceEls = document.querySelectorAll('.price-row');
+      const prices = [];
+      priceEls.forEach(row => {
+        const label = row.querySelector('.price-label').value.trim();
+        const val = parseInt(row.querySelector('.price-value').value);
+        if (label && !isNaN(val)) prices.push({ label, price: val });
+      });
+      if (prices.length === 0) { alert('Agrega al menos un precio'); return; }
+
+      const body = { name, category, desc, images: currentImages, prices };
+      let res;
+      if (id) {
+        res = await fetch('/api/products/' + id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+      } else {
+        res = await fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+      }
+      if (res.ok) {
+        closeModal();
+        loadProducts();
+      } else {
+        alert('Error al guardar');
+      }
+    }
+
+    async function deleteProduct() {
+      const id = document.getElementById('edit-id').value;
+      if (!confirm('¿Eliminar este producto?')) return;
+      const res = await fetch('/api/products/' + id, { method: 'DELETE' });
+      if (res.ok) { closeModal(); loadProducts(); }
+    }
+
+    async function uploadImages() {
+      const input = document.getElementById('file-input');
+      const files = input.files;
+      if (!files.length) return;
+      if (!cloudName || !uploadPreset) {
+        document.getElementById('upload-status').textContent = '✗ Configura Cloudinary en variables de entorno';
+        return;
+      }
+      const status = document.getElementById('upload-status');
+      status.textContent = 'Subiendo a Cloudinary...';
+      const urls = [];
+      for (const file of files) {
+        const form = new FormData();
+        form.append('file', file);
+        form.append('upload_preset', uploadPreset);
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: 'POST',
+          body: form,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          urls.push(data.secure_url);
+        }
+      }
+      if (urls.length) {
+        currentImages.push(...urls);
+        renderImageThumbs();
+        status.textContent = `✓ ${urls.length} subida(s) a Cloudinary`;
+        input.value = '';
+      } else {
+        status.textContent = '✗ Error al subir';
+      }
+    }
+
+    /* ─── Decoración ─── */
+    async function loadDeco() {
+      const res = await fetch('/api/decoracion');
+      const config = await res.json();
+      for (const key of ['hero', 'banner1', 'banner2']) {
+        document.getElementById(`deco-${key}`).value = config[key] || '';
+        document.getElementById(`deco-${key}-preview`).src = config[key] || '';
+      }
+    }
+
+    function previewDeco(key) {
+      const url = document.getElementById(`deco-${key}`).value.trim();
+      document.getElementById(`deco-${key}-preview`).src = url || '';
+    }
+
+    async function saveDeco() {
+      const body = {};
+      for (const key of ['hero', 'banner1', 'banner2']) {
+        body[key] = document.getElementById(`deco-${key}`).value.trim();
+      }
+      const res = await fetch('/api/decoracion', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const status = document.getElementById('deco-status');
+      if (res.ok) {
+        status.textContent = '✓ Guardado';
+        loadDeco();
+      } else {
+        status.textContent = '✗ Error';
+      }
+      setTimeout(() => { status.textContent = ''; }, 3000);
+    }
+
+    async function uploadDeco(key) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async () => {
+        const file = input.files[0];
+        if (!file) return;
+        if (!cloudName || !uploadPreset) return;
+        const form = new FormData();
+        form.append('file', file);
+        form.append('upload_preset', uploadPreset);
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: 'POST',
+          body: form,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const url = data.secure_url;
+          document.getElementById(`deco-${key}`).value = url;
+          document.getElementById(`deco-${key}-preview`).src = url;
+        }
+      };
+      input.click();
+    }
+
+    loadProducts();
+    loadDeco();
+  </script>
+</body>
+</html>
