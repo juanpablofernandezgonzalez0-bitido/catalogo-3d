@@ -3,32 +3,15 @@ import { MongoClient } from 'mongodb';
 let client;
 let _db;
 
-function buildUri(raw) {
-  // MongoDB Atlas SRV DNS resolution may fail on some serverless environments.
-  // Fall back to explicit host list if the URI uses mongodb+srv protocol.
-  if (raw && raw.startsWith('mongodb+srv://')) {
-    const match = raw.match(/^mongodb\+srv:\/\/(.+?@)?(.+?)(\/.*)?$/);
-    if (match) {
-      const creds = match[1] || '';
-      const host = match[2].split('?')[0].split('.')[0]; // cluster name
-      const rest = match[3] || '';
-      const params = rest.includes('?') ? rest.split('?')[1] : '';
-      const query = params ? params.split('&').filter(p => !p.startsWith('appName=')).join('&') : '';
-      // Use mongodb:// with srv resolved hosts
-      return `mongodb://${creds}ac-vvt5wfh-shard-00-00.wprhzb7.mongodb.net:27017,ac-vvt5wfh-shard-00-01.wprhzb7.mongodb.net:27017,ac-vvt5wfh-shard-00-02.wprhzb7.mongodb.net:27017/masss_catalog?ssl=true&replicaSet=atlas-n208to-shard-0&authSource=admin&${query}&retryWrites=true&w=majority`;
-    }
-  }
-  return raw;
-}
-
 async function connect() {
   if (_db) return _db;
-  const uri = buildUri(process.env.MONGODB_URI || '');
+  const uri = process.env.MONGODB_URI || '';
   client = new MongoClient(uri, {
     serverSelectionTimeoutMS: 8000,
-    connectTimeoutMS: 8000,
+    connectTimeoutMS: 10000,
     socketTimeoutMS: 30000,
     maxPoolSize: 1,
+    autoSelectFamily: false,
   });
   await client.connect();
   _db = client.db('masss_catalog');
