@@ -5,7 +5,7 @@
     "category": "producto",
     "desc": "Elaborado a base de 7 plantas naturales. Ideal para fortalecer el cabello desde la raíz.",
     "images": [
-      "/Fotos/Shampoo.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534845/masss_catalog/products/Shampoo_cws257.jpg"
     ],
     "prices": [
       {
@@ -21,7 +21,7 @@
     "category": "producto",
     "desc": "Brinda extra suavidad, hidrata y protege la cutícula capilar. Deja el cabello sedoso y brillante.",
     "images": [
-      "/Fotos/Acondicionador.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534831/masss_catalog/products/Acondicionador_vshznh.jpg"
     ],
     "prices": [
       {
@@ -37,7 +37,7 @@
     "category": "producto",
     "desc": "A base de semilla de lino. Hidrata, define y da manejabilidad al cabello.",
     "images": [
-      "/Fotos/Hydros.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534834/masss_catalog/products/Hydros_teqvfi.jpg"
     ],
     "prices": [
       {
@@ -53,7 +53,7 @@
     "category": "producto",
     "desc": "Fortalce el folículo piloso y reduce el crecimiento de canas.",
     "images": [
-      "/Fotos/NutriR.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534841/masss_catalog/products/NutriR_qz6lcq.jpg"
     ],
     "prices": [
       {
@@ -69,7 +69,7 @@
     "category": "producto",
     "desc": "Elaborado a base de 7 plantas naturales. Ideal para fortalecer el cabello desde la raíz.",
     "images": [
-      "/fotos/shampoo1.jpg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534861/masss_catalog/products/shampoo1_ahd0ek.jpg"
     ],
     "prices": [
       {
@@ -85,7 +85,7 @@
     "category": "producto",
     "desc": "Brinda extra suavidad, hidrata y protege la cutícula capilar. Deja el cabello sedoso y brillante.",
     "images": [
-      "/fotos/shampo.jpg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534859/masss_catalog/products/shampo_gv5ulu.jpg"
     ],
     "prices": [
       {
@@ -101,7 +101,7 @@
     "category": "producto",
     "desc": "Hidrata, define y da manejabilidad al cabello.",
     "images": [
-      "/fotos/imagen.jpg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534840/masss_catalog/products/Imagen_flg6lp.jpg"
     ],
     "prices": [
       {
@@ -117,7 +117,7 @@
     "category": "producto",
     "desc": "Aceite especial contra la alopecia. Fortalece, nutre y revitaliza desde la raíz.",
     "images": [
-      "/Fotos/Aloper.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534832/masss_catalog/products/Aloper_w2a9hv.jpg"
     ],
     "prices": [
       {
@@ -133,7 +133,7 @@
     "category": "producto",
     "desc": "Combate caspa, hongos y psoriasis. Equilibra el cuero cabelludo.",
     "images": [
-      "/Fotos/Revital.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534844/masss_catalog/products/Revital_dyi0th.jpg"
     ],
     "prices": [
       {
@@ -149,7 +149,7 @@
     "category": "viajero",
     "desc": "Shampoo mas pequeño ideal para viajes.",
     "images": [
-      "/Fotos/VIAJERO1.jpg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534851/masss_catalog/products/VIAJERO1_h3dvat.jpg"
     ],
     "prices": [
       {
@@ -165,7 +165,7 @@
     "category": "producto",
     "desc": "Hidrata, repara y nutre cabellos con falta de proteína. Recupera fuerza y brillo.",
     "images": [
-      "/Fotos/Revid.jpg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534843/masss_catalog/products/Revid_vuk0q0.jpg"
     ],
     "prices": [
       {
@@ -181,7 +181,7 @@
     "category": "accesorio",
     "desc": "Protege tu cabello mientras duermes, reduciendo fricción y resequedad.",
     "images": [
-      "/Fotos/Accesorio4.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534827/masss_catalog/products/Accesorio4_rb2cfo.jpg"
     ],
     "prices": [
       {
@@ -197,7 +197,7 @@
     "category": "accesorio",
     "desc": "Protege tu cabello mientras duermes, reduciendo fricción y resequedad.",
     "images": [
-      "/Fotos/Accesorio5.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534828/masss_catalog/products/Accesorio5_ow4vek.jpg"
     ],
     "prices": [
       {
@@ -213,7 +213,7 @@
     "category": "accesorio",
     "desc": "Flor para decorar tu look.",
     "images": [
-      "/fotos/Accesorio2.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534826/masss_catalog/products/Accesorio2_axhtde.jpg"
     ],
     "prices": [
       {
@@ -229,7 +229,7 @@
     "category": "viajero",
     "desc": "Acondicionador mas pequeño ideal para viajes.",
     "images": [
-      "/fotos/VIAJERO3.jpg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534853/masss_catalog/products/VIAJERO3_co1sko.jpg"
     ],
     "prices": [
       {
@@ -245,7 +245,7 @@
     "category": "viajero",
     "desc": "Hydros mas pequeño ideal para viajes.",
     "images": [
-      "/fotos/VIAJERO.jpg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534849/masss_catalog/products/VIAJERO_g0gk7f.jpg"
     ],
     "prices": [
       {
@@ -261,7 +261,7 @@
     "category": "accesorio",
     "desc": "Atomizador para tu uso.",
     "images": [
-      "/fotos/Accesorio6.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534830/masss_catalog/products/Accesorio6_eq7pty.jpg"
     ],
     "prices": [
       {
@@ -277,7 +277,7 @@
     "category": "accesorio",
     "desc": "Atomizador grande para tu uso.",
     "images": [
-      "/fotos/Accesorio3.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534826/masss_catalog/products/Accesorio3_y40me3.jpg"
     ],
     "prices": [
       {
@@ -293,7 +293,7 @@
     "category": "accesorio",
     "desc": "Masajeador para el cabello.",
     "images": [
-      "/fotos/Accesorio.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534824/masss_catalog/products/Accesorio_yomx7o.jpg"
     ],
     "prices": [
       {
@@ -309,7 +309,7 @@
     "category": "accesorio",
     "desc": "Cepillo para tu cabello.",
     "images": [
-      "/fotos/Accesorio1.jpeg"
+      "https://res.cloudinary.com/dkz2x6emo/image/upload/v1782534825/masss_catalog/products/Accesorio1_erqc5d.jpg"
     ],
     "prices": [
       {
