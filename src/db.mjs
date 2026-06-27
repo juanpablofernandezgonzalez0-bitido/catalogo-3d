@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ServerApiVersion } from 'mongodb';
 
 let client;
 let _db;
@@ -7,11 +7,18 @@ async function connect() {
   if (_db) return _db;
   const uri = process.env.MONGODB_URI || '';
   client = new MongoClient(uri, {
-    serverSelectionTimeoutMS: 8000,
+    serverSelectionTimeoutMS: 10000,
     connectTimeoutMS: 10000,
     socketTimeoutMS: 30000,
     maxPoolSize: 1,
-    autoSelectFamily: false,
+    tls: true,
+    tlsAllowInvalidCertificates: true,
+    tlsAllowInvalidHostnames: true,
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: false,
+      deprecationErrors: false,
+    },
   });
   await client.connect();
   _db = client.db('masss_catalog');
