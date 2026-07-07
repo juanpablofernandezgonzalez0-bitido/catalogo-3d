@@ -111,48 +111,16 @@ export function initAnimations() {
     });
   });
 
-  // Editorial banner — scroll reveal (bidirectional via scrub)
+  // Editorial banner — simple reveal on scroll
   document.querySelectorAll('.editorial-banner').forEach((banner) => {
-    const img = banner.querySelector('.editorial-image img');
     const text = banner.querySelector('.editorial-text');
-    const isSecond = banner.classList.contains('banner-reverse');
-    if (!img) return;
-
-    gsap.set(img, { scale: 1.15, clipPath: 'inset(0 0 100% 0)' });
-    if (text) gsap.set(text, { opacity: 0, y: 30 });
-
-    const fadeStart = isSecond ? 0.92 : 0.85;
-
+    if (!text) return;
+    gsap.set(text, { opacity: 0, y: 20 });
     ScrollTrigger.create({
       trigger: banner,
-      start: 'top 85%',
-      end: isSecond ? 'top 0%' : 'top 5%',
-      scrub: 1.5,
-      onUpdate: (self) => {
-        const p = self.progress;
-        const imgP = Math.min(p / 0.65, 1);
-        const clipBottom = Math.round((1 - imgP) * 100);
-        img.style.clipPath = `inset(0 0 ${clipBottom}% 0)`;
-        img.style.transform = `scale(${1.15 - imgP * 0.15})`;
-        if (p > fadeStart) {
-          const fp = (p - fadeStart) / (1 - fadeStart);
-          img.style.opacity = 1 - fp;
-        } else {
-          img.style.opacity = 1;
-        }
-        if (!text) return;
-        if (p < 0.65) {
-          const tp = p / 0.65;
-          text.style.opacity = tp;
-          text.style.transform = `translateY(${(1 - tp) * 20}px)`;
-        } else if (p > fadeStart) {
-          const fp = (p - fadeStart) / (1 - fadeStart);
-          text.style.opacity = 1 - fp;
-          text.style.transform = `translateY(${-fp * 15}px)`;
-        } else {
-          text.style.opacity = 1;
-          text.style.transform = 'translateY(0)';
-        }
+      start: 'top 90%',
+      onEnter: () => {
+        gsap.to(text, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' });
       },
     });
   });

@@ -151,6 +151,16 @@ body {
 #navbar:not(.scrolled) .nav-toggle span { background: #fff; }
 
 @media (max-width: 768px) {
+  #navbar { padding: 0.3rem 0; }
+
+  #navbar:not(.scrolled) {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 100%);
+  }
+
+  .nav-logo { height: 80px; }
+
+  #navbar.scrolled .nav-logo { height: 55px; }
+
   .nav-links {
     position: fixed;
     top: 0;
@@ -171,8 +181,6 @@ body {
   .nav-links a { color: var(--text-dim) !important; }
 
   .nav-toggle { display: flex; z-index: 101; }
-
-  #navbar.scrolled .nav-logo { height: 80px; }
 }
 
 /* ─── HERO ─── */
@@ -295,7 +303,7 @@ body {
 
   .hero-text {
     max-width: 100%;
-    padding: 3rem 1.5rem 4rem;
+    padding: 1.5rem 1.5rem 3rem;
     text-align: center;
     align-items: center;
   }

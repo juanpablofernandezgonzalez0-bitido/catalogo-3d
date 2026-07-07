@@ -15,7 +15,6 @@ dist-ssr
 # Local file symlinks (not available on Vercel)
 public/Fotos
 public/decorar
-public/logo.png
 public/uploads
 
 # Editor directories and files
