@@ -62,7 +62,7 @@ body {
   left: 0;
   right: 0;
   z-index: 100;
-  padding: 0.5rem 0;
+  padding: 0.8rem 0;
   transition: background 0.4s, backdrop-filter 0.4s, box-shadow 0.4s;
 }
 
@@ -81,17 +81,6 @@ body {
   align-items: center;
   justify-content: flex-end;
 }
-
-.nav-logo {
-  height: 160px;
-  width: auto;
-  display: block;
-  transition: height 0.3s;
-  filter: brightness(0.95);
-  margin-right: auto;
-}
-
-#navbar.scrolled .nav-logo { height: 110px; }
 
 .nav-links {
   display: flex;
@@ -151,15 +140,7 @@ body {
 #navbar:not(.scrolled) .nav-toggle span { background: #fff; }
 
 @media (max-width: 768px) {
-  #navbar { padding: 0.3rem 0; }
-
-  #navbar:not(.scrolled) {
-    background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 100%);
-  }
-
-  .nav-logo { height: 80px; }
-
-  #navbar.scrolled .nav-logo { height: 55px; }
+  #navbar { padding: 0.5rem 0; }
 
   .nav-links {
     position: fixed;
