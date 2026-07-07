@@ -231,6 +231,13 @@ body {
   color: var(--text);
 }
 
+.hero-logo {
+  width: min(400px, 80%);
+  height: auto;
+  display: block;
+  margin-bottom: 1rem;
+}
+
 .hero-subtitle {
   font-size: 1.15rem;
   color: var(--text-dim);
