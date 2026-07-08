@@ -189,7 +189,7 @@
 
       let _lbData = { images: [], idx: 0, prices: [] };
 
-      function openProductModal(product, images, idx) {
+      window.openProductModal = function(product, images, idx) {
         _lbData = { images, idx, prices: product.prices || [] };
         const lb = document.getElementById('lightbox');
         document.getElementById('lightboxImg').src = images[idx] || '';
