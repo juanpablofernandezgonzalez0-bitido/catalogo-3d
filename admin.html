@@ -382,10 +382,12 @@ document.getElementById('edit-desc').value = p.desc;
       e.target.closest('.card')?.classList.add('drag-over');
     }
 
-    function drop(e) {
+    async function drop(e) {
       e.preventDefault();
       document.querySelectorAll('.card').forEach(c => c.classList.remove('drag-over'));
-      const targetId = e.target.closest('.card').dataset.id;
+      const card = e.target.closest('.card');
+      if (!card || !draggedId) return;
+      const targetId = card.dataset.id;
       if (!draggedId || draggedId === targetId) return;
       const ids = products.map(p => p.id);
       const fromIdx = ids.indexOf(draggedId);
