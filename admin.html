@@ -193,8 +193,12 @@
         </select>
       </div>
       <div class="form-group">
-        <label>Descripción</label>
-        <textarea id="edit-desc" placeholder="Descripción del producto"></textarea>
+        <label>Descripción (tarjeta)</label>
+        <textarea id="edit-desc" placeholder="Descripción corta del producto"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Descripción larga (modal)</label>
+        <textarea id="edit-desc-larga" placeholder="Descripción detallada que aparece en la ventana del producto" rows="3"></textarea>
       </div>
       <div class="form-group">
         <label>Imágenes</label>
@@ -300,7 +304,8 @@
         document.getElementById('edit-id').value = p.id;
         document.getElementById('edit-name').value = p.name;
         document.getElementById('edit-category').value = p.category || 'producto';
-        document.getElementById('edit-desc').value = p.desc;
+document.getElementById('edit-desc').value = p.desc;
+        document.getElementById('edit-desc-larga').value = p.desc_larga || '';
         currentImages = Array.isArray(p.images) ? [...p.images] : [p.image || p.images || ''].filter(Boolean);
         renderImageThumbs();
         renderPrices(p.prices);
@@ -311,6 +316,7 @@
         document.getElementById('edit-name').value = '';
         document.getElementById('edit-category').value = 'producto';
         document.getElementById('edit-desc').value = '';
+        document.getElementById('edit-desc-larga').value = '';
         currentImages = [];
         renderImageThumbs();
         renderPrices([{ label: '', price: 0 }]);
@@ -327,7 +333,8 @@
       openEditor();
       document.getElementById('edit-name').value = p.name + ' (copia)';
       document.getElementById('edit-category').value = p.category || 'producto';
-      document.getElementById('edit-desc').value = p.desc;
+document.getElementById('edit-desc').value = p.desc;
+      document.getElementById('edit-desc-larga').value = p.desc_larga || '';
       currentImages = Array.isArray(p.images) ? [...p.images] : [p.image || ''].filter(Boolean);
       renderImageThumbs();
       renderPrices(p.prices);
@@ -411,6 +418,8 @@
         return;
       }
 
+      const descLarga = document.getElementById('edit-desc-larga').value.trim();
+
       const priceEls = document.querySelectorAll('.price-row');
       const prices = [];
       priceEls.forEach(row => {
@@ -420,7 +429,7 @@
       });
       if (prices.length === 0) { alert('Agrega al menos un precio'); return; }
 
-      const body = { name, category, desc, images: currentImages, prices };
+      const body = { name, category, desc, desc_larga: descLarga, images: currentImages, prices };
       let res;
       if (id) {
         res = await fetch('/api/products/' + id, {

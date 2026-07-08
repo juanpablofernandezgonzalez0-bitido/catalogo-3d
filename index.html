@@ -162,10 +162,20 @@
 
     <div class="lightbox" id="lightbox">
       <button class="close" onclick="closeLightbox()">✕</button>
-      <button class="lb-arrow left" id="lbPrev">‹</button>
-      <img id="lightboxImg" src="" alt="">
-      <button class="lb-arrow right" id="lbNext">›</button>
-      <div class="lb-counter" id="lbCounter"></div>
+      <div class="lightbox-content">
+        <div class="lb-image-wrap">
+          <img id="lightboxImg" src="" alt="">
+          <div class="lb-arrow-overlay">
+            <button id="lbPrev">‹</button>
+            <button id="lbNext">›</button>
+          </div>
+        </div>
+        <div class="lb-info" id="lbInfo">
+          <h2 id="lbName"></h2>
+          <p class="lb-desc" id="lbDesc"></p>
+          <div class="lb-prices" id="lbPrices"></div>
+        </div>
+      </div>
     </div>
 
     <script type="module" src="/src/main.js"></script>
@@ -176,6 +186,72 @@
           if (config[key]) img.src = config[key];
         });
       }).catch(() => {});
+
+      let _lbData = { images: [], idx: 0, prices: [] };
+
+      function openProductModal(product, images, idx) {
+        _lbData = { images, idx, prices: product.prices || [] };
+        const lb = document.getElementById('lightbox');
+        document.getElementById('lightboxImg').src = images[idx] || '';
+        document.getElementById('lbName').textContent = product.name || '';
+        document.getElementById('lbDesc').textContent = product.desc || '';
+        const pricesEl = document.getElementById('lbPrices');
+        pricesEl.innerHTML = (product.prices || []).map((pr, i) => `
+          <div class="lb-price-row">
+            <span class="lb-label">${pr.label}</span>
+            <span class="lb-val">$${pr.price.toLocaleString('es-CO')}</span>
+            <span class="lb-actions">
+              <button class="qty-btn" onclick="event.stopPropagation();updateLBCart('${product.id}','${pr.label}',${pr.price},-1)">−</button>
+              <span class="qty-num" id="lb-qty-${i}">0</span>
+              <button class="qty-btn" onclick="event.stopPropagation();updateLBCart('${product.id}','${pr.label}',${pr.price},1)">+</button>
+            </span>
+          </div>`).join('');
+        lb.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        updateLBCounters();
+      }
+
+      function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      function lbNav(dir) {
+        _lbData.idx += dir;
+        if (_lbData.idx < 0) _lbData.idx = _lbData.images.length - 1;
+        if (_lbData.idx >= _lbData.images.length) _lbData.idx = 0;
+        document.getElementById('lightboxImg').src = _lbData.images[_lbData.idx] || '';
+        updateLBCounters();
+      }
+
+      function updateLBCounters() {
+        const cart = window.__cart || [];
+        document.querySelectorAll('#lbPrices .lb-price-row').forEach((row, i) => {
+          const pr = _lbData.prices ? _lbData.prices[i] : null;
+          if (!pr) return;
+          const inCart = cart.find(item => item.label === pr.label);
+          const span = document.getElementById(`lb-qty-${i}`);
+          if (span) span.textContent = inCart ? inCart.qty : 0;
+        });
+      }
+
+      function updateLBCart(id, label, price, delta) {
+        if (!window.__cart) window.__cart = [];
+        const item = window.__cart.find(i => i.id === id && i.label === label);
+        if (item) {
+          item.qty = Math.max(0, item.qty + delta);
+          if (item.qty === 0) window.__cart = window.__cart.filter(i => i !== item);
+        } else if (delta > 0) {
+          window.__cart.push({ id, label, price, qty: 1, name: document.getElementById('lbName').textContent, image: _lbData.images[0] || '' });
+        }
+        window.dispatchEvent(new CustomEvent('cart-update'));
+        updateLBCounters();
+        renderCart();
+      }
+
+      document.getElementById('lightbox').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeLightbox();
+      });
 
       function openCart() {
         document.getElementById('cartDrawer').classList.add('open');

@@ -55,7 +55,7 @@ function renderCard(p) {
   const dots = hasMultiple ? `<div class="gallery-dots">${images.map((_, i) => `<span class="dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>`).join('')}</div>` : '';
 
   return `
-    <div class="product-card" data-product='${JSON.stringify({ id: p.id, name: p.name, images: Array.isArray(p.images) ? p.images : [p.image || ''].filter(Boolean) }).replace(/'/g, "&#39;")}'>
+    <div class="product-card" data-product='${JSON.stringify({ id: p.id, name: p.name, desc: p.desc_larga || p.desc || '', images: Array.isArray(p.images) ? p.images : [p.image || ''].filter(Boolean), prices: p.prices }).replace(/'/g, "&#39;")}'>
       <div class="card-image-wrap" data-images='${JSON.stringify(images)}'>
         <img src="${firstImg}" alt="${p.name}" loading="lazy">
         <div class="card-overlay"></div>
@@ -124,12 +124,14 @@ document.addEventListener('click', (e) => {
 
 document.addEventListener('click', (e) => {
   const wrap = e.target.closest('.card-image-wrap');
-  if (!wrap || e.target.closest('.gallery-arrow')) return;
+  if (!wrap || e.target.closest('.gallery-arrow') || e.target.closest('.qty-btn') || e.target.closest('.cart-qty-ctrl')) return;
+  const card = wrap.closest('.product-card');
+  let productData;
+  try { productData = JSON.parse(card.dataset.product); } catch {}
+  if (!productData) return;
   const images = JSON.parse(wrap.dataset.images || '[]');
-  if (images.length > 0) {
-    const idx = parseInt(wrap.dataset.currentIdx || '0');
-    openLightbox(images, idx);
-  }
+  const idx = parseInt(wrap.dataset.currentIdx || '0');
+  openProductModal(productData, images, idx);
 });
 
 document.addEventListener('click', (e) => {
