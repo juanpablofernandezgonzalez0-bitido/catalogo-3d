@@ -1214,8 +1214,8 @@ footer {
   .section-product { padding: 4rem 0; }
 
   .product-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
   }
 
   .steps-grid {
@@ -1225,6 +1225,12 @@ footer {
   .payment-methods { gap: 1.5rem; }
 
   .payment-box { padding: 2rem 1.5rem; }
+}
+
+@media (max-width: 400px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 480px) {
