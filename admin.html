@@ -83,7 +83,11 @@
       overflow: hidden;
       box-shadow: 0 2px 12px rgba(0,0,0,0.06);
       border: 1px solid rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s, transform 0.2s;
+      cursor: grab;
     }
+    .card:active { cursor: grabbing; }
+    .card.drag-over { box-shadow: 0 0 0 2px #c98797; }
     .card img {
       width: 100%;
       aspect-ratio: 1/1;
@@ -266,7 +270,12 @@
           ${items.map(p => {
             const imgs = Array.isArray(p.images) ? p.images : [p.image || p.images || ''];
             return `
-            <div class="card">
+            <div class="card" draggable="true" data-id="${p.id}"
+                  ondragstart="dragStart(event)"
+                  ondragend="dragEnd(event)"
+                  ondragover="dragOver(event)"
+                  ondragleave="this.classList.remove('drag-over')"
+                  ondrop="drop(event)">
               <img src="${imgs[0]}" alt="${p.name}" loading="lazy">
               <div class="card-body">
                 <div style="display:flex;gap:0.4rem;align-items:center;margin-bottom:0.3rem">
@@ -348,6 +357,41 @@ document.getElementById('edit-desc').value = p.desc;
       if (swapIdx < 0 || swapIdx >= products.length) return;
       const ids = products.map(p => p.id);
       [ids[idx], ids[swapIdx]] = [ids[swapIdx], ids[idx]];
+      const res = await fetch('/api/products/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds: ids }),
+      });
+      if (res.ok) loadProducts();
+    }
+
+    let draggedId = null;
+
+    function dragStart(e) {
+      draggedId = e.target.closest('.card').dataset.id;
+      e.target.closest('.card').style.opacity = '0.4';
+    }
+
+    function dragEnd(e) {
+      e.target.closest('.card').style.opacity = '1';
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('drag-over'));
+    }
+
+    function dragOver(e) {
+      e.preventDefault();
+      e.target.closest('.card')?.classList.add('drag-over');
+    }
+
+    function drop(e) {
+      e.preventDefault();
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('drag-over'));
+      const targetId = e.target.closest('.card').dataset.id;
+      if (!draggedId || draggedId === targetId) return;
+      const ids = products.map(p => p.id);
+      const fromIdx = ids.indexOf(draggedId);
+      const toIdx = ids.indexOf(targetId);
+      ids.splice(fromIdx, 1);
+      ids.splice(toIdx, 0, draggedId);
       const res = await fetch('/api/products/reorder', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

@@ -213,10 +213,10 @@ body {
 }
 
 .hero-logo {
-  width: min(400px, 80%);
+  width: min(500px, 90%);
   height: auto;
   display: block;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .hero-subtitle {
@@ -559,24 +559,25 @@ body {
 }
 
 .card-info {
-  padding: 1.25rem 1.5rem;
-  flex: 1;
+  padding: 0.8rem 1rem;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .card-info h3 {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin-bottom: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
 }
 
-.card-info > p {
-  color: var(--text-dim);
+.card-price {
   font-size: 0.85rem;
-  margin-bottom: 1rem;
-  line-height: 1.5;
-  flex: 1;
+  font-weight: 700;
+  color: var(--rose-dark);
+  white-space: nowrap;
 }
 
 .prices {
@@ -1232,7 +1233,5 @@ footer {
 }
 
 @media (max-width: 480px) {
-  .card-info { padding: 1rem 1.25rem; }
-
-  .card-info h3 { font-size: 1.1rem; }
+  .card-info { padding: 0.6rem 0.8rem; }
 }

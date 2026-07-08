@@ -29,11 +29,16 @@ export async function renderProducts() {
 }
 
 function renderCard(p) {
+  const cart = getCart();
   const images = Array.isArray(p.images) ? p.images : [p.image || p.images || ''].filter(Boolean);
   const firstImg = images[0] || '';
   const hasMultiple = images.length > 1;
 
   const dots = hasMultiple ? `<div class="gallery-dots">${images.map((_, i) => `<span class="dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>`).join('')}</div>` : '';
+
+  const priceLabel = p.prices && p.prices.length > 0
+    ? `$${Math.min(...p.prices.map(pr => pr.price)).toLocaleString('es-CO')}`
+    : '';
 
   return `
     <div class="product-card" data-product='${JSON.stringify({ id: p.id, name: p.name, desc: p.desc_larga || p.desc || '', images: Array.isArray(p.images) ? p.images : [p.image || ''].filter(Boolean), prices: p.prices }).replace(/'/g, "&#39;")}'>
@@ -48,6 +53,7 @@ function renderCard(p) {
       </div>
       <div class="card-info">
         <h3>${p.name}</h3>
+        <span class="card-price">${priceLabel}</span>
       </div>
     </div>
   `;
