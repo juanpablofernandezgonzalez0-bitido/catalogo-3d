@@ -67,7 +67,6 @@ function renderCard(p) {
       </div>
       <div class="card-info">
         <h3>${p.name}</h3>
-        <p>${p.desc}</p>
         <div class="prices">${priceRows}</div>
       </div>
     </div>
