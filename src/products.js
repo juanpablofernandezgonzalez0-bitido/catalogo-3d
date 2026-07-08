@@ -29,25 +29,6 @@ export async function renderProducts() {
 }
 
 function renderCard(p) {
-  const cart = getCart();
-
-  const priceRows = p.prices.map(pr => {
-    const inCart = cart.find(i => i.id === p.id && i.label === pr.label);
-    const qty = inCart ? inCart.qty : 0;
-    return `
-      <div class="price-row">
-        <span>${pr.label}</span>
-        <span class="price-val">$${pr.price.toLocaleString('es-CO')}</span>
-        <span class="cart-qty-ctrl" data-id="${p.id}" data-label="${pr.label}" data-price="${pr.price}">
-          ${qty > 0 ? `
-            <button class="qty-btn" data-action="remove">−</button>
-            <span class="qty-num">${qty}</span>
-          ` : ''}
-          <button class="qty-btn add-btn" data-action="add">+</button>
-        </span>
-      </div>`;
-  }).join('');
-
   const images = Array.isArray(p.images) ? p.images : [p.image || p.images || ''].filter(Boolean);
   const firstImg = images[0] || '';
   const hasMultiple = images.length > 1;
@@ -67,7 +48,6 @@ function renderCard(p) {
       </div>
       <div class="card-info">
         <h3>${p.name}</h3>
-        <div class="prices">${priceRows}</div>
       </div>
     </div>
   `;
@@ -122,9 +102,9 @@ document.addEventListener('click', (e) => {
 });
 
 document.addEventListener('click', (e) => {
-  const wrap = e.target.closest('.card-image-wrap');
-  if (!wrap || e.target.closest('.gallery-arrow') || e.target.closest('.qty-btn') || e.target.closest('.cart-qty-ctrl')) return;
-  const card = wrap.closest('.product-card');
+  const card = e.target.closest('.product-card');
+  if (!card || e.target.closest('.gallery-arrow') || e.target.closest('.qty-btn') || e.target.closest('.cart-qty-ctrl')) return;
+  const wrap = card.querySelector('.card-image-wrap');
   let productData;
   try { productData = JSON.parse(card.dataset.product); } catch {}
   if (!productData) return;
