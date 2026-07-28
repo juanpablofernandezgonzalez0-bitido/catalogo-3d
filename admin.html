@@ -182,7 +182,8 @@
     <h2>Videos</h2>
     <div id="videos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-bottom:1rem"></div>
     <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
-      <input type="text" id="video-title" placeholder="Título del video" style="flex:1;min-width:150px;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;font-family:inherit">
+      <input type="text" id="video-title" placeholder="Título del video" style="flex:1;min-width:140px;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;font-family:inherit">
+      <input type="text" id="video-desc" placeholder="Descripción (opcional)" style="flex:1;min-width:140px;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;font-family:inherit">
       <input type="text" id="video-url" placeholder="URL del video (Cloudinary)" style="flex:2;min-width:200px;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;font-family:inherit">
       <button class="btn" onclick="addVideo()">+ Agregar Video</button>
     </div>
@@ -637,6 +638,7 @@ document.getElementById('edit-desc').value = p.desc;
           <video src="${v.url}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000" muted preload="metadata"></video>
           <div class="card-body">
             <h3>${v.title}</h3>
+            ${v.desc ? `<p style="color:#555;font-size:0.85rem;margin-bottom:0.5rem">${v.desc}</p>` : ''}
             <div class="card-actions">
               <button class="btn btn-danger" style="padding:0.4rem 0.8rem;font-size:0.85rem" onclick="deleteVideo(${i})">Eliminar</button>
             </div>
@@ -647,11 +649,13 @@ document.getElementById('edit-desc').value = p.desc;
 
     async function addVideo() {
       const title = document.getElementById('video-title').value.trim();
+      const desc = document.getElementById('video-desc').value.trim();
       const url = document.getElementById('video-url').value.trim();
       if (!title || !url) { alert('Completa título y URL'); return; }
-      videos.push({ id: Date.now().toString(36), title, url });
+      videos.push({ id: Date.now().toString(36), title, desc, url });
       await saveVideos();
       document.getElementById('video-title').value = '';
+      document.getElementById('video-desc').value = '';
       document.getElementById('video-url').value = '';
       renderVideos();
     }

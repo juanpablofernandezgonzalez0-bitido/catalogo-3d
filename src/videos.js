@@ -17,6 +17,7 @@ export async function renderVideos() {
           </button>
         </div>
         ${v.title ? `<h3>${v.title}</h3>` : ''}
+        ${v.desc ? `<p class="video-desc">${v.desc}</p>` : ''}
       </div>
     `).join('');
 

@@ -663,10 +663,17 @@ body {
 }
 
 .video-card h3 {
-  padding: 0.8rem 1rem;
+  padding: 0.8rem 1rem 0;
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text);
+}
+
+.video-desc {
+  padding: 0.25rem 1rem 0.8rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  line-height: 1.4;
 }
 
 @media (max-width: 768px) {
