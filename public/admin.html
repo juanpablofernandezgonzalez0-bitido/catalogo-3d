@@ -83,7 +83,11 @@
       overflow: hidden;
       box-shadow: 0 2px 12px rgba(0,0,0,0.06);
       border: 1px solid rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s, transform 0.2s;
+      cursor: grab;
     }
+    .card:active { cursor: grabbing; }
+    .card.drag-over { box-shadow: 0 0 0 2px #c98797; }
     .card img {
       width: 100%;
       aspect-ratio: 1/1;
@@ -174,6 +178,22 @@
     <span id="deco-status" style="font-size:0.85rem;color:#888;margin-left:1rem"></span>
   </div>
 
+  <div class="deco-section">
+    <h2>Videos</h2>
+    <div id="videos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-bottom:1rem"></div>
+    <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+      <input type="text" id="video-title" placeholder="Título del video" style="flex:1;min-width:140px;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;font-family:inherit">
+      <input type="text" id="video-desc" placeholder="Descripción (opcional)" style="flex:1;min-width:140px;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;font-family:inherit">
+      <input type="text" id="video-url" placeholder="URL del video (Cloudinary)" style="flex:2;min-width:200px;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;font-family:inherit">
+      <button class="btn" onclick="addVideo()">+ Agregar Video</button>
+    </div>
+    <div style="margin-top:0.5rem;display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+      <input type="file" accept="video/*" id="video-file-input" style="font-size:0.85rem;flex:1">
+      <button class="btn btn-secondary" onclick="uploadVideo()">Subir video a Cloudinary</button>
+      <span id="video-upload-status" style="font-size:0.8rem;color:#888"></span>
+    </div>
+  </div>
+
   <div class="productos-grid" id="grid"></div>
 
   <div class="modal-overlay" id="modal">
@@ -193,8 +213,12 @@
         </select>
       </div>
       <div class="form-group">
-        <label>Descripción</label>
-        <textarea id="edit-desc" placeholder="Descripción del producto"></textarea>
+        <label>Descripción (tarjeta)</label>
+        <textarea id="edit-desc" placeholder="Descripción corta del producto"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Descripción larga (modal)</label>
+        <textarea id="edit-desc-larga" placeholder="Descripción detallada que aparece en la ventana del producto" rows="3"></textarea>
       </div>
       <div class="form-group">
         <label>Imágenes</label>
@@ -262,7 +286,12 @@
           ${items.map(p => {
             const imgs = Array.isArray(p.images) ? p.images : [p.image || p.images || ''];
             return `
-            <div class="card">
+            <div class="card" draggable="true" data-id="${p.id}"
+                  ondragstart="dragStart(event)"
+                  ondragend="dragEnd(event)"
+                  ondragover="dragOver(event)"
+                  ondragleave="this.classList.remove('drag-over')"
+                  ondrop="drop(event)">
               <img src="${imgs[0]}" alt="${p.name}" loading="lazy">
               <div class="card-body">
                 <div style="display:flex;gap:0.4rem;align-items:center;margin-bottom:0.3rem">
@@ -300,7 +329,8 @@
         document.getElementById('edit-id').value = p.id;
         document.getElementById('edit-name').value = p.name;
         document.getElementById('edit-category').value = p.category || 'producto';
-        document.getElementById('edit-desc').value = p.desc;
+document.getElementById('edit-desc').value = p.desc;
+        document.getElementById('edit-desc-larga').value = p.desc_larga || '';
         currentImages = Array.isArray(p.images) ? [...p.images] : [p.image || p.images || ''].filter(Boolean);
         renderImageThumbs();
         renderPrices(p.prices);
@@ -311,6 +341,7 @@
         document.getElementById('edit-name').value = '';
         document.getElementById('edit-category').value = 'producto';
         document.getElementById('edit-desc').value = '';
+        document.getElementById('edit-desc-larga').value = '';
         currentImages = [];
         renderImageThumbs();
         renderPrices([{ label: '', price: 0 }]);
@@ -327,7 +358,8 @@
       openEditor();
       document.getElementById('edit-name').value = p.name + ' (copia)';
       document.getElementById('edit-category').value = p.category || 'producto';
-      document.getElementById('edit-desc').value = p.desc;
+document.getElementById('edit-desc').value = p.desc;
+      document.getElementById('edit-desc-larga').value = p.desc_larga || '';
       currentImages = Array.isArray(p.images) ? [...p.images] : [p.image || ''].filter(Boolean);
       renderImageThumbs();
       renderPrices(p.prices);
@@ -341,6 +373,43 @@
       if (swapIdx < 0 || swapIdx >= products.length) return;
       const ids = products.map(p => p.id);
       [ids[idx], ids[swapIdx]] = [ids[swapIdx], ids[idx]];
+      const res = await fetch('/api/products/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds: ids }),
+      });
+      if (res.ok) loadProducts();
+    }
+
+    let draggedId = null;
+
+    function dragStart(e) {
+      draggedId = e.target.closest('.card').dataset.id;
+      e.target.closest('.card').style.opacity = '0.4';
+    }
+
+    function dragEnd(e) {
+      e.target.closest('.card').style.opacity = '1';
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('drag-over'));
+    }
+
+    function dragOver(e) {
+      e.preventDefault();
+      e.target.closest('.card')?.classList.add('drag-over');
+    }
+
+    async function drop(e) {
+      e.preventDefault();
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('drag-over'));
+      const card = e.target.closest('.card');
+      if (!card || !draggedId) return;
+      const targetId = card.dataset.id;
+      if (!draggedId || draggedId === targetId) return;
+      const ids = products.map(p => p.id);
+      const fromIdx = ids.indexOf(draggedId);
+      const toIdx = ids.indexOf(targetId);
+      ids.splice(fromIdx, 1);
+      ids.splice(toIdx, 0, draggedId);
       const res = await fetch('/api/products/reorder', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -411,6 +480,8 @@
         return;
       }
 
+      const descLarga = document.getElementById('edit-desc-larga').value.trim();
+
       const priceEls = document.querySelectorAll('.price-row');
       const prices = [];
       priceEls.forEach(row => {
@@ -420,7 +491,7 @@
       });
       if (prices.length === 0) { alert('Agrega al menos un precio'); return; }
 
-      const body = { name, category, desc, images: currentImages, prices };
+      const body = { name, category, desc, desc_larga: descLarga, images: currentImages, prices };
       let res;
       if (id) {
         res = await fetch('/api/products/' + id, {
@@ -544,8 +615,131 @@
       input.click();
     }
 
+    /* ─── Videos ─── */
+    let videos = [];
+
+    async function loadVideos() {
+      const res = await fetch('/api/videos');
+      videos = await res.json();
+      renderVideos();
+    }
+
+    function renderVideos() {
+      const grid = document.getElementById('videos-grid');
+      if (!videos.length) {
+        grid.innerHTML = '<p style="color:#999;grid-column:1/-1;text-align:center;padding:1rem">No hay videos aún</p>';
+        return;
+      }
+      grid.innerHTML = videos.map((v, i) => `
+        <div class="card" draggable="true" data-video-idx="${i}"
+              ondragstart="videoDragStart(event)" ondragend="videoDragEnd(event)"
+              ondragover="videoDragOver(event)" ondragleave="this.classList.remove('drag-over')"
+              ondrop="videoDrop(event)">
+          <video src="${v.url}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000" muted preload="metadata"></video>
+          <div class="card-body">
+            <h3>${v.title}</h3>
+            ${v.desc ? `<p style="color:#555;font-size:0.85rem;margin-bottom:0.5rem">${v.desc}</p>` : ''}
+            <div class="card-actions">
+              <button class="btn btn-danger" style="padding:0.4rem 0.8rem;font-size:0.85rem" onclick="deleteVideo(${i})">Eliminar</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function addVideo() {
+      const title = document.getElementById('video-title').value.trim();
+      const desc = document.getElementById('video-desc').value.trim();
+      const url = document.getElementById('video-url').value.trim();
+      if (!title || !url) { alert('Completa título y URL'); return; }
+      videos.push({ id: Date.now().toString(36), title, desc, url });
+      await saveVideos();
+      document.getElementById('video-title').value = '';
+      document.getElementById('video-desc').value = '';
+      document.getElementById('video-url').value = '';
+      renderVideos();
+    }
+
+    async function deleteVideo(idx) {
+      if (!confirm('¿Eliminar este video?')) return;
+      videos.splice(idx, 1);
+      await saveVideos();
+      renderVideos();
+    }
+
+    async function saveVideos() {
+      await fetch('/api/videos', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(videos),
+      });
+    }
+
+    let videoDraggedIdx = null;
+
+    function videoDragStart(e) {
+      videoDraggedIdx = parseInt(e.target.closest('.card').dataset.videoIdx);
+      e.target.closest('.card').style.opacity = '0.4';
+    }
+
+    function videoDragEnd(e) {
+      e.target.closest('.card').style.opacity = '1';
+      document.querySelectorAll('#videos-grid .card').forEach(c => c.classList.remove('drag-over'));
+    }
+
+    function videoDragOver(e) {
+      e.preventDefault();
+      e.target.closest('.card')?.classList.add('drag-over');
+    }
+
+    async function videoDrop(e) {
+      e.preventDefault();
+      document.querySelectorAll('#videos-grid .card').forEach(c => c.classList.remove('drag-over'));
+      const card = e.target.closest('.card');
+      if (!card || videoDraggedIdx === null) return;
+      const targetIdx = parseInt(card.dataset.videoIdx);
+      if (videoDraggedIdx === targetIdx) return;
+      const item = videos.splice(videoDraggedIdx, 1)[0];
+      videos.splice(targetIdx, 0, item);
+      await saveVideos();
+      renderVideos();
+      videoDraggedIdx = null;
+    }
+
+    async function uploadVideo() {
+      const input = document.getElementById('video-file-input');
+      const file = input.files[0];
+      if (!file) return;
+      if (!cloudName || !uploadPreset) {
+        document.getElementById('video-upload-status').textContent = '✗ Configura Cloudinary en variables de entorno';
+        return;
+      }
+      const status = document.getElementById('video-upload-status');
+      status.textContent = 'Subiendo a Cloudinary...';
+      const form = new FormData();
+      form.append('file', file);
+      form.append('upload_preset', uploadPreset);
+      try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/video/upload`, {
+          method: 'POST',
+          body: form,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('video-url').value = data.secure_url;
+          status.textContent = `✓ Subido: ${data.original_filename}`;
+          input.value = '';
+        } else {
+          status.textContent = '✗ Error al subir (¿el preset acepta videos?)';
+        }
+      } catch {
+        status.textContent = '✗ Error de conexión';
+      }
+    }
+
     loadProducts();
     loadDeco();
+    loadVideos();
   </script>
 </body>
 </html>
