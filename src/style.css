@@ -617,13 +617,13 @@ body {
 
 .video-card video {
   width: 100%;
+  max-width: 500px;
   display: block;
-  max-height: 80vh;
-  object-fit: cover;
+  margin: 0 auto;
 }
 
 @media (max-width: 768px) {
-  .video-card video { max-height: 50vh; }
+  .video-card video { max-width: 100%; }
 }
 
 /* ─── CART QTY CONTROLS ─── */
