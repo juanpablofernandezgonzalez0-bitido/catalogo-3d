@@ -11,39 +11,14 @@ export async function renderVideos() {
     grid.innerHTML = videos.map(v => `
       <div class="video-card">
         <div class="video-wrap">
-          <video src="${v.url}" muted loop preload="metadata" playsinline></video>
-          <button class="video-play-btn" aria-label="Reproducir">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-          </button>
+          <video src="${v.url}" autoplay muted loop playsinline></video>
         </div>
-        ${v.title ? `<h3>${v.title}</h3>` : ''}
-        ${v.desc ? `<p class="video-desc">${v.desc}</p>` : ''}
+        <div class="video-caption">
+          ${v.title ? `<h3>${v.title}</h3>` : ''}
+          ${v.desc ? `<p class="video-desc">${v.desc}</p>` : ''}
+        </div>
       </div>
     `).join('');
-
-    grid.querySelectorAll('.video-card').forEach(card => {
-      const video = card.querySelector('video');
-      const btn = card.querySelector('.video-play-btn');
-      btn.addEventListener('click', () => {
-        if (video.paused) {
-          video.play();
-          btn.style.display = 'none';
-        } else {
-          video.pause();
-        }
-      });
-      video.addEventListener('click', () => {
-        if (video.paused) {
-          video.play();
-          btn.style.display = 'none';
-        } else {
-          video.pause();
-          btn.style.display = '';
-        }
-      });
-      video.addEventListener('pause', () => { btn.style.display = ''; });
-      video.addEventListener('ended', () => { btn.style.display = ''; });
-    });
   } catch (e) {
     console.warn('Error loading videos:', e);
   }

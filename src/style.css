@@ -603,11 +603,11 @@ body {
   color: var(--rose);
 }
 
-/* ─── VIDEO GRID ─── */
+/* ─── VIDEO SECTION ─── */
 .video-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
 }
 
 .video-card {
@@ -615,78 +615,44 @@ body {
   border-radius: var(--radius);
   overflow: hidden;
   border: 1px solid rgba(0,0,0,0.04);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.video-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 48px rgba(201, 135, 151, 0.12);
 }
 
 .video-wrap {
   position: relative;
-  aspect-ratio: 16 / 9;
   background: #000;
-  cursor: pointer;
+  width: 100%;
 }
 
 .video-wrap video {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
   display: block;
+  max-height: 80vh;
+  object-fit: contain;
+  background: #000;
 }
 
-.video-play-btn {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.9);
-  border: none;
-  color: var(--rose-dark);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s, background 0.2s;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+.video-caption {
+  padding: 1.2rem 1.5rem;
 }
 
-.video-play-btn:hover {
-  transform: translate(-50%, -50%) scale(1.1);
-  background: #fff;
-}
-
-.video-card h3 {
-  padding: 0.8rem 1rem 0;
-  font-size: 0.9rem;
+.video-caption h3 {
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--text);
+  margin-bottom: 0.3rem;
 }
 
-.video-desc {
-  padding: 0.25rem 1rem 0.8rem;
-  font-size: 0.8rem;
+.video-caption .video-desc {
+  font-size: 0.85rem;
   color: var(--text-dim);
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 @media (max-width: 768px) {
-  .video-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.8rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .video-grid {
-    grid-template-columns: 1fr;
-  }
+  .video-grid { gap: 1.5rem; }
+  .video-wrap video { max-height: 50vh; }
+  .video-caption { padding: 1rem; }
+  .video-caption h3 { font-size: 1rem; }
 }
 
 /* ─── CART QTY CONTROLS ─── */
