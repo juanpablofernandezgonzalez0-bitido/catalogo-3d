@@ -1,7 +1,8 @@
 import express from 'express';
 import {
   getProducts, getProduct, createProduct, updateProduct,
-  deleteProduct, reorderProducts, getDecoracion, saveDecoracion
+  deleteProduct, reorderProducts, getDecoracion, saveDecoracion,
+  getVideos, saveVideos
 } from '../src/db.mjs';
 
 const app = express();
@@ -87,6 +88,24 @@ app.get('/api/decoracion', async (req, res) => {
 app.put('/api/decoracion', async (req, res) => {
   try {
     const data = await saveDecoracion(req.body);
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/videos', async (req, res) => {
+  try {
+    const data = await getVideos();
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.put('/api/videos', async (req, res) => {
+  try {
+    const data = await saveVideos(req.body);
     res.json(data);
   } catch (e) {
     res.status(500).json({ error: e.message });

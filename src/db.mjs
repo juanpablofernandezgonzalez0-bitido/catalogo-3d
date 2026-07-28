@@ -96,3 +96,17 @@ export async function saveDecoracion(data) {
   });
   return data;
 }
+
+export async function getVideos() {
+  const rows = await supabase('GET', 'decoracion?id=eq.videos&select=hero');
+  if (!rows || !rows.length) return [];
+  try { return JSON.parse(rows[0].hero || '[]'); } catch { return []; }
+}
+
+export async function saveVideos(videos) {
+  await supabase('POST', 'decoracion?on_conflict=id', {
+    body: { id: 'videos', hero: JSON.stringify(videos), banner1: '', banner2: '' },
+    headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
+  });
+  return videos;
+}

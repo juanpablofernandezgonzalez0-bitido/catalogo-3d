@@ -2,6 +2,7 @@ import './style.css';
 import { initScene } from './three-scene.js';
 import { initAnimations } from './animations.js';
 import { renderProducts } from './products.js';
+import { renderVideos } from './videos.js';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 function hideLoading() {
@@ -28,9 +29,12 @@ try {
 
 (async () => {
   try {
-    await renderProducts();
+    await Promise.all([
+      renderProducts(),
+      renderVideos(),
+    ]);
   } catch (e) {
-    console.warn('Render products error:', e);
+    console.warn('Render error:', e);
   }
   ScrollTrigger.refresh();
   try {
