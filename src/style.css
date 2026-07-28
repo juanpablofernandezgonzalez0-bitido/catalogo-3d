@@ -607,52 +607,23 @@ body {
 .video-grid {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 1.5rem;
 }
 
 .video-card {
-  background: var(--surface);
   border-radius: var(--radius);
   overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.04);
 }
 
-.video-wrap {
-  position: relative;
-  background: #000;
-  width: 100%;
-}
-
-.video-wrap video {
+.video-card video {
   width: 100%;
   display: block;
   max-height: 80vh;
-  object-fit: contain;
-  background: #000;
-}
-
-.video-caption {
-  padding: 1.2rem 1.5rem;
-}
-
-.video-caption h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 0.3rem;
-}
-
-.video-caption .video-desc {
-  font-size: 0.85rem;
-  color: var(--text-dim);
-  line-height: 1.5;
+  object-fit: cover;
 }
 
 @media (max-width: 768px) {
-  .video-grid { gap: 1.5rem; }
-  .video-wrap video { max-height: 50vh; }
-  .video-caption { padding: 1rem; }
-  .video-caption h3 { font-size: 1rem; }
+  .video-card video { max-height: 50vh; }
 }
 
 /* ─── CART QTY CONTROLS ─── */
