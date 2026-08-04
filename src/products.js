@@ -23,6 +23,8 @@ export async function renderProducts() {
       const images = JSON.parse(wrap.dataset.images || '[]');
       if (images.length > 1) startAutoPlay(wrap);
     });
+
+    document.dispatchEvent(new CustomEvent('cart-update'));
   } catch (e) {
     console.warn('Error loading products:', e);
   }
