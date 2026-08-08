@@ -177,11 +177,14 @@
       <button class="close" onclick="closeLightbox()">✕</button>
       <div class="lightbox-content">
         <div class="lb-image-wrap">
-          <img id="lightboxImg" src="" alt="">
-          <div class="lb-arrow-overlay">
-            <button id="lbPrev">‹</button>
-            <button id="lbNext">›</button>
+          <div class="lb-main-img">
+            <img id="lightboxImg" src="" alt="">
+            <div class="lb-arrow-overlay">
+              <button id="lbPrev">‹</button>
+              <button id="lbNext">›</button>
+            </div>
           </div>
+          <div class="lb-thumbs" id="lbThumbs"></div>
         </div>
         <div class="lb-info" id="lbInfo">
           <h2 id="lbName"></h2>
@@ -219,9 +222,33 @@
               <button class="qty-btn" onclick="event.stopPropagation();updateLBCart('${product.id}','${pr.label}',${pr.price},1)">+</button>
             </span>
           </div>`).join('');
+        renderLBThumbs();
         lb.classList.add('active');
         document.body.style.overflow = 'hidden';
         updateLBCounters();
+      }
+
+      function renderLBThumbs() {
+        const container = document.getElementById('lbThumbs');
+        const imgs = _lbData.images || [];
+        if (imgs.length <= 1) {
+          container.innerHTML = '';
+          container.style.display = 'none';
+          return;
+        }
+        container.style.display = 'flex';
+        container.innerHTML = imgs.map((src, i) => `
+          <img class="lb-thumb${i === _lbData.idx ? ' active' : ''}" src="${src}"
+               onclick="event.stopPropagation();lbGo(${i})" alt="Imagen ${i + 1}">
+        `).join('');
+      }
+
+      function lbGo(i) {
+        if (i < 0) i = _lbData.images.length - 1;
+        if (i >= _lbData.images.length) i = 0;
+        _lbData.idx = i;
+        document.getElementById('lightboxImg').src = _lbData.images[i] || '';
+        renderLBThumbs();
       }
 
       function closeLightbox() {
@@ -234,6 +261,7 @@
         if (_lbData.idx < 0) _lbData.idx = _lbData.images.length - 1;
         if (_lbData.idx >= _lbData.images.length) _lbData.idx = 0;
         document.getElementById('lightboxImg').src = _lbData.images[_lbData.idx] || '';
+        renderLBThumbs();
         updateLBCounters();
       }
 
