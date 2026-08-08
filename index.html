@@ -177,14 +177,7 @@
       <button class="close" onclick="closeLightbox()">✕</button>
       <div class="lightbox-content">
         <div class="lb-image-wrap">
-          <div class="lb-main-img">
-            <img id="lightboxImg" src="" alt="">
-            <div class="lb-arrow-overlay">
-              <button id="lbPrev">‹</button>
-              <button id="lbNext">›</button>
-            </div>
-          </div>
-          <div class="lb-thumbs" id="lbThumbs"></div>
+          <img id="lightboxImg" src="" alt="">
         </div>
         <div class="lb-info" id="lbInfo">
           <h2 id="lbName"></h2>
@@ -206,9 +199,10 @@
       let _lbData = { images: [], idx: 0, prices: [] };
 
       window.openProductModal = function(product, images, idx) {
-        _lbData = { images, idx, prices: product.prices || [] };
+        const otherIdx = images.length > 1 ? 1 : 0;
+        _lbData = { images, idx: otherIdx, prices: product.prices || [] };
         const lb = document.getElementById('lightbox');
-        document.getElementById('lightboxImg').src = images[idx] || '';
+        document.getElementById('lightboxImg').src = images[otherIdx] || '';
         document.getElementById('lbName').textContent = product.name || '';
         document.getElementById('lbDesc').textContent = product.desc || '';
         const pricesEl = document.getElementById('lbPrices');
@@ -222,47 +216,14 @@
               <button class="qty-btn" onclick="event.stopPropagation();updateLBCart('${product.id}','${pr.label}',${pr.price},1)">+</button>
             </span>
           </div>`).join('');
-        renderLBThumbs();
         lb.classList.add('active');
         document.body.style.overflow = 'hidden';
         updateLBCounters();
       }
 
-      function renderLBThumbs() {
-        const container = document.getElementById('lbThumbs');
-        const imgs = _lbData.images || [];
-        if (imgs.length <= 1) {
-          container.innerHTML = '';
-          container.style.display = 'none';
-          return;
-        }
-        container.style.display = 'flex';
-        container.innerHTML = imgs.map((src, i) => `
-          <img class="lb-thumb${i === _lbData.idx ? ' active' : ''}" src="${src}"
-               onclick="event.stopPropagation();lbGo(${i})" alt="Imagen ${i + 1}">
-        `).join('');
-      }
-
-      function lbGo(i) {
-        if (i < 0) i = _lbData.images.length - 1;
-        if (i >= _lbData.images.length) i = 0;
-        _lbData.idx = i;
-        document.getElementById('lightboxImg').src = _lbData.images[i] || '';
-        renderLBThumbs();
-      }
-
       function closeLightbox() {
         document.getElementById('lightbox').classList.remove('active');
         document.body.style.overflow = '';
-      }
-
-      function lbNav(dir) {
-        _lbData.idx += dir;
-        if (_lbData.idx < 0) _lbData.idx = _lbData.images.length - 1;
-        if (_lbData.idx >= _lbData.images.length) _lbData.idx = 0;
-        document.getElementById('lightboxImg').src = _lbData.images[_lbData.idx] || '';
-        renderLBThumbs();
-        updateLBCounters();
       }
 
       function updateLBCounters() {
@@ -386,61 +347,6 @@
         clearTimeout(el._timer);
         el._timer = setTimeout(() => el.classList.remove('show'), 2000);
       }
-
-      let lbImages = [];
-      let lbIndex = 0;
-
-      function openLightbox(images, idx) {
-        lbImages = Array.isArray(images) ? images : [images];
-        lbIndex = typeof idx === 'number' ? idx : 0;
-        updateLightbox();
-        document.getElementById('lightbox').classList.add('active');
-        document.body.style.overflow = 'hidden';
-      }
-
-      function updateLightbox() {
-        const img = document.getElementById('lightboxImg');
-        img.src = lbImages[lbIndex] || '';
-        const counter = document.getElementById('lbCounter');
-        const prev = document.getElementById('lbPrev');
-        const next = document.getElementById('lbNext');
-        if (lbImages.length > 1) {
-          counter.textContent = `${lbIndex + 1} / ${lbImages.length}`;
-          counter.style.display = 'block';
-          prev.style.display = 'flex';
-          next.style.display = 'flex';
-        } else {
-          counter.style.display = 'none';
-          prev.style.display = 'none';
-          next.style.display = 'none';
-        }
-      }
-
-      function closeLightbox() {
-        document.getElementById('lightbox').classList.remove('active');
-        document.body.style.overflow = '';
-      }
-
-      function lbNav(dir) {
-        lbIndex += dir;
-        if (lbIndex < 0) lbIndex = lbImages.length - 1;
-        if (lbIndex >= lbImages.length) lbIndex = 0;
-        updateLightbox();
-      }
-
-      document.getElementById('lightbox').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget) closeLightbox();
-      });
-
-      document.getElementById('lbPrev').addEventListener('click', () => lbNav(-1));
-      document.getElementById('lbNext').addEventListener('click', () => lbNav(1));
-
-      document.addEventListener('keydown', (e) => {
-        if (!document.getElementById('lightbox').classList.contains('active')) return;
-        if (e.key === 'Escape') closeLightbox();
-        if (e.key === 'ArrowLeft') lbNav(-1);
-        if (e.key === 'ArrowRight') lbNav(1);
-      });
 
       const toggle = document.getElementById('navToggle');
       const links = document.getElementById('navLinks');
