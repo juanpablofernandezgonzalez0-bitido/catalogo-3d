@@ -24,7 +24,16 @@ async function supabase(method, path, options = {}) {
 function toProduct(row) {
   if (!row) return null;
   const { sort_order, description, ...rest } = row;
-  return { ...rest, order: sort_order, desc: description ?? '' };
+  let desc = description ?? '';
+  let desc_larga = '';
+  if (typeof description === 'string' && description.startsWith('{') && description.includes('"dl"')) {
+    try {
+      const parsed = JSON.parse(description);
+      desc = parsed.d ?? '';
+      desc_larga = parsed.dl ?? '';
+    } catch {}
+  }
+  return { ...rest, order: sort_order, desc, desc_larga };
 }
 
 export async function getProducts() {
@@ -38,10 +47,14 @@ export async function getProduct(id) {
 }
 
 function toRow(data) {
-  const { order: o, desc: d, ...rest } = data;
+  const { order: o, desc: d, desc_larga: dl, ...rest } = data;
   const row = { ...rest };
   if (o !== undefined) row.sort_order = o;
-  if (d !== undefined) row.description = d;
+  if (dl !== undefined && dl.trim() !== '') {
+    row.description = JSON.stringify({ d: d ?? '', dl });
+  } else if (d !== undefined) {
+    row.description = d;
+  }
   return row;
 }
 
