@@ -111,6 +111,17 @@ export function initAnimations() {
     });
   });
 
+  const acercaItems = document.querySelectorAll('.acerca-item');
+  acercaItems.forEach((el, i) => {
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 90%',
+      onEnter: () => {
+        setTimeout(() => el.classList.add('visible'), i * 90);
+      },
+    });
+  });
+
   // Editorial banner — simple reveal on scroll
   document.querySelectorAll('.editorial-banner').forEach((banner) => {
     const text = banner.querySelector('.editorial-text');
