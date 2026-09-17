@@ -631,9 +631,15 @@ body {
 
 /* ─── VIDEO SECTION ─── */
 .video-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .video-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .video-card {
@@ -644,7 +650,6 @@ body {
 
 .video-card video {
   width: 100%;
-  max-width: 500px;
   display: block;
   margin: 0 auto;
 }
