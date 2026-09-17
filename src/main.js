@@ -7,22 +7,12 @@ function hideLoading() {
   if (el) el.classList.add('hidden');
 }
 
-if (document.readyState === 'complete') {
-  hideLoading();
-} else {
-  window.addEventListener('load', hideLoading);
-}
-
-setTimeout(hideLoading, 4000);
+requestAnimationFrame(() => setTimeout(hideLoading, 300));
 
 try {
   const canvas = document.getElementById('three-canvas');
-  if (canvas) {
-    initScene(canvas);
-  }
-} catch (e) {
-  console.warn('3D init error:', e);
-}
+  if (canvas) initScene(canvas);
+} catch (e) {}
 
 (async () => {
   try {
@@ -30,22 +20,21 @@ try {
   } catch (e) {
     console.warn('Render error:', e);
   }
+  hideLoading();
 
   try {
-    const { initAnimations } = await import('./animations.js');
-    const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+    const [{ initAnimations }, { ScrollTrigger }] = await Promise.all([
+      import('./animations.js'),
+      import('gsap/ScrollTrigger'),
+    ]);
     ScrollTrigger.refresh();
     initAnimations();
-  } catch (e) {
-    console.warn('Animations init error:', e);
-  }
+  } catch (e) {}
 
   try {
     const { renderVideos } = await import('./videos.js');
     await renderVideos();
-  } catch (e) {
-    console.warn('Videos init error:', e);
-  }
+  } catch (e) {}
 
   init3DTilt();
 })();
