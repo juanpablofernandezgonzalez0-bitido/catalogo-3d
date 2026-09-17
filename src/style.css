@@ -646,12 +646,12 @@ body {
   border-radius: var(--radius);
   overflow: hidden;
   position: relative;
+  background: #000;
 }
 
 .video-card video {
   width: 100%;
   display: block;
-  margin: 0 auto;
 }
 
 .video-play-overlay {

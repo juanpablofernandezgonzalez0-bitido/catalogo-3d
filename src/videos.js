@@ -13,33 +13,47 @@ export async function renderVideos() {
     }
 
     if (!videos.length) {
-      grid.innerHTML = '<p style="text-align:center;color:#999;padding:2rem">Próximamente</p>';
+      grid.innerHTML = '<p style="text-align:center;color:#999;padding:2rem">Proximamente</p>';
       return;
     }
-    grid.innerHTML = videos.map((v, i) => `
-      <div class="video-card">
-        <video src="${v.url}" muted loop playsinline preload="none" data-lazy-video playsinline></video>
-        <div class="video-play-overlay" onclick="this.previousElementSibling.play();this.style.display='none'">
-          <svg viewBox="0 0 24 24" width="48" height="48"><circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.4)"/><polygon points="9,6 19,12 9,18" fill="white"/></svg>
-        </div>
-      </div>
-    `).join('');
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const v = entry.target.querySelector('video');
-          if (v && v.dataset.lazyVideo !== undefined) {
-            v.preload = 'auto';
-            v.load();
-            delete v.dataset.lazyVideo;
-          }
-          observer.unobserve(entry.target);
+    grid.innerHTML = videos.map((v, i) => {
+      const publicId = v.url.replace(/.*\/upload\//, '').replace(/\.[^.]+$/, '');
+      return `
+        <div class="video-card">
+          <video
+            id="cld-video-${i}"
+            class="cld-video-player-cards"
+            controls
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            data-cld-public-id="${publicId}"
+          ></video>
+        </div>
+      `;
+    }).join('');
+
+    if (window.cloudinary) {
+      videos.forEach((v, i) => {
+        try {
+          const el = document.getElementById(`cld-video-${i}`);
+          if (!el) return;
+          window.cloudinary.videoPlayer(el, {
+            cloud_name: 'dkz2x6emo',
+            autoplay: false,
+            muted: true,
+            loop: true,
+            controls: 'play-large',
+            fluid: true,
+            aspectRatio: '9:16',
+          });
+        } catch (e) {
+          console.warn('CldPlayer error:', e);
         }
       });
-    }, { rootMargin: '400px' });
-
-    grid.querySelectorAll('.video-card').forEach(card => observer.observe(card));
+    }
   } catch (e) {
     console.warn('Error loading videos:', e);
   }
