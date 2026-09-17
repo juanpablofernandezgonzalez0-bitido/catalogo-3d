@@ -18,7 +18,7 @@ export async function renderVideos() {
     }
     grid.innerHTML = videos.map(v => `
       <div class="video-card">
-        <video src="${v.url}" autoplay muted loop playsinline></video>
+        <video src="${v.url}" muted loop playsinline preload="none" onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0"></video>
       </div>
     `).join('');
   } catch (e) {

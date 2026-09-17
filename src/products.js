@@ -1,5 +1,10 @@
 import { addToCart, removeFromCart, getCart } from './cart.js';
 
+function optImg(url, w = 400) {
+  if (!url || !url.includes('cloudinary.com')) return url;
+  return url.replace('/upload/', `/upload/f_auto,q_auto,w_${w}/`);
+}
+
 export async function renderProducts() {
   try {
     const res = await fetch('/api/products');
@@ -46,7 +51,7 @@ function renderCard(p) {
   return `
     <div class="product-card" data-product='${JSON.stringify({ id: p.id, name: p.name, desc: p.desc_larga || p.desc || '', images: Array.isArray(p.images) ? p.images : [p.image || ''].filter(Boolean), prices: p.prices }).replace(/'/g, "&#39;")}'>
       <div class="card-image-wrap">
-        <img src="${firstImg}" alt="${p.name}" loading="lazy">
+        <img src="${optImg(firstImg)}" alt="${p.name}" loading="lazy" decoding="async">
         <div class="card-overlay"></div>
       </div>
       <div class="card-info">
