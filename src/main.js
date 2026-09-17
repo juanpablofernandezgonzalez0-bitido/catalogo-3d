@@ -1,9 +1,6 @@
 import './style.css';
 import { initScene } from './three-scene.js';
-import { initAnimations } from './animations.js';
 import { renderProducts } from './products.js';
-import { renderVideos } from './videos.js';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 function hideLoading() {
   const el = document.getElementById('loading');
@@ -29,19 +26,27 @@ try {
 
 (async () => {
   try {
-    await Promise.all([
-      renderProducts(),
-      renderVideos(),
-    ]);
+    await renderProducts();
   } catch (e) {
     console.warn('Render error:', e);
   }
-  ScrollTrigger.refresh();
+
   try {
+    const { initAnimations } = await import('./animations.js');
+    const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+    ScrollTrigger.refresh();
     initAnimations();
   } catch (e) {
     console.warn('Animations init error:', e);
   }
+
+  try {
+    const { renderVideos } = await import('./videos.js');
+    await renderVideos();
+  } catch (e) {
+    console.warn('Videos init error:', e);
+  }
+
   init3DTilt();
 })();
 

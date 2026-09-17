@@ -47,6 +47,41 @@ body {
   opacity: 0.3;
 }
 
+.particles-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  background: radial-gradient(circle, rgba(239,173,209,0.6) 0%, rgba(239,173,209,0) 70%);
+  border-radius: 50%;
+  animation: particleFloat linear infinite;
+}
+
+.shape-float {
+  position: absolute;
+  background: transparent;
+  animation: shapeFloat ease-in-out infinite;
+}
+
+@keyframes particleFloat {
+  0% { transform: translateY(0) translateX(0) scale(1); }
+  25% { transform: translateY(-30vh) translateX(15px) scale(1.1); }
+  50% { transform: translateY(-60vh) translateX(-10px) scale(0.9); }
+  75% { transform: translateY(-90vh) translateX(20px) scale(1.05); }
+  100% { transform: translateY(-120vh) translateX(0) scale(1); }
+}
+
+@keyframes shapeFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+  33% { transform: translateY(-20px) rotate(120deg) scale(1.05); }
+  66% { transform: translateY(10px) rotate(240deg) scale(0.95); }
+}
+
 #app { position: relative; z-index: 1; }
 
 .container {
