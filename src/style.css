@@ -639,6 +639,7 @@ body {
 .video-card {
   border-radius: var(--radius);
   overflow: hidden;
+  position: relative;
 }
 
 .video-card video {
@@ -647,6 +648,19 @@ body {
   display: block;
   margin: 0 auto;
 }
+
+.video-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: rgba(0,0,0,0.1);
+  transition: background 0.3s;
+}
+
+.video-play-overlay:hover { background: rgba(0,0,0,0.25); }
 
 @media (max-width: 768px) {
   .video-card video { max-width: 100%; }
