@@ -86,6 +86,14 @@ export async function renderVideos() {
       });
     });
 
+    let touchStartX = 0;
+    const wrap = grid.querySelector('.video-carousel-wrap');
+    wrap.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    wrap.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
+    }, { passive: true });
+
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
     function loadVideoHls(video, hlsUrl, fallbackUrl) {
