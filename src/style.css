@@ -630,86 +630,26 @@ body {
 }
 
 /* ─── VIDEO SECTION ─── */
-.video-carousel-wrap {
-  position: relative;
-  overflow: hidden;
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .video-grid { grid-template-columns: 1fr; }
+}
+
+.video-card {
   border-radius: var(--radius);
+  overflow: hidden;
+  background: #000;
 }
 
-.video-carousel {
-  display: flex;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.video-carousel .video-card {
-  min-width: 100%;
-  flex-shrink: 0;
-  border-radius: 0;
-}
-
-.video-carousel .video-card video {
+.video-card video {
   width: 100%;
-  max-height: 75vh;
-  object-fit: contain;
+  display: block;
 }
-
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(8px);
-  color: white;
-  font-size: 1.4rem;
-  cursor: pointer;
-  z-index: 10;
-  transition: background 0.3s, opacity 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-}
-
-.video-carousel-wrap:hover .carousel-btn { opacity: 1; }
-.carousel-btn:hover { background: rgba(255,255,255,0.3); }
-.carousel-btn.prev { left: 12px; }
-.carousel-btn.next { right: 12px; }
-
-.carousel-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 1rem;
-}
-
-.carousel-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 2px solid var(--rose);
-  background: transparent;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.carousel-dot.active { background: var(--rose); }
-
-.video-play-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background: rgba(0,0,0,0.1);
-  transition: background 0.3s;
-}
-
-.video-play-overlay:hover { background: rgba(0,0,0,0.25); }
 
 /* ─── CART QTY CONTROLS ─── */
 .cart-qty-ctrl {
