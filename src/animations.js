@@ -15,10 +15,110 @@ function splitChars(el) {
 }
 
 export function initAnimations() {
-  // 4. Title character reveal (works both directions)
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isNarrow = window.matchMedia('(max-width: 768px)').matches;
+
+  setupNav();
+
+  if (reduceMotion) {
+    document
+      .querySelectorAll('.product-card, .acerca-item, .step-card, .kit-showcase, .payment-box')
+      .forEach(el => el.classList.add('visible'));
+    return;
+  }
+
+  // 1. Section fade-in + smooth displacement
+  document.querySelectorAll('.section-product .container, .section-acerca .container').forEach(container => {
+    gsap.from(container, {
+      opacity: 0,
+      y: 28,
+      duration: 0.7,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: container.parentElement,
+        start: 'top 95%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+  });
+
+  // 2. Section numbers pop-in (01, 02, 03, 04)
+  document.querySelectorAll('.section-number').forEach(num => {
+    gsap.set(num, { opacity: 0, y: 14, scale: 0.6 });
+    function popIn() {
+      gsap.killTweensOf(num);
+      gsap.to(num, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.8)' });
+    }
+    ScrollTrigger.create({
+      trigger: num,
+      start: 'top 92%',
+      onEnter: popIn,
+      onEnterBack: popIn,
+    });
+  });
+
+  // 3. Parallax (desktop only — mobile stays light)
+  if (!isNarrow) {
+    // Hero background image
+    const heroImg = document.querySelector('.hero-visual img');
+    if (heroImg) {
+      gsap.set(heroImg, { scale: 1.14 });
+      gsap.to(heroImg, {
+        yPercent: 6,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.7,
+        },
+      });
+    }
+
+    // Hero text drifts slightly opposite for depth
+    const heroText = document.querySelector('.hero-text');
+    if (heroText) {
+      gsap.to(heroText, {
+        yPercent: -5,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.9,
+        },
+      });
+    }
+
+    // "Acerca de" gallery parallax — wrapper keeps hover scale intact
+    document.querySelectorAll('.acerca-item').forEach(item => {
+      const img = item.querySelector('img');
+      if (!img || img.parentElement.classList.contains('acerca-parallax')) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'acerca-parallax';
+      item.insertBefore(wrap, img);
+      wrap.appendChild(img);
+
+      gsap.fromTo(
+        wrap,
+        { yPercent: -4 },
+        {
+          yPercent: 4,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: item,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.8,
+          },
+        }
+      );
+    });
+  }
+
+  // Header title character reveal (works both directions)
   document.querySelectorAll('.section-header').forEach(header => {
     const h2 = header.querySelector('h2');
-    const num = header.querySelector('.section-number');
     const p = header.querySelector('p');
     if (!h2) return;
 
@@ -30,11 +130,6 @@ export function initAnimations() {
       gsap.killTweensOf(chars);
       gsap.set(chars, { opacity: 0, y: 25, rotateZ: -8 });
       gsap.to(chars, { opacity: 1, y: 0, rotateZ: 0, stagger: 0.035, duration: 0.45, ease: 'power3.out' });
-      if (num) {
-        gsap.killTweensOf(num);
-        gsap.set(num, { opacity: 0, y: 20 });
-        gsap.to(num, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
-      }
       if (p) {
         gsap.killTweensOf(p);
         gsap.set(p, { opacity: 0, y: 15 });
@@ -50,7 +145,7 @@ export function initAnimations() {
     });
   });
 
-  // 5. Prices stagger per card (works both directions)
+  // Prices stagger per card (works both directions)
   document.querySelectorAll('.product-card').forEach(card => {
     const rows = card.querySelectorAll('.price-row');
     if (!rows.length) return;
@@ -123,7 +218,7 @@ export function initAnimations() {
   });
 
   // Editorial banner — simple reveal on scroll
-  document.querySelectorAll('.editorial-banner').forEach((banner) => {
+  document.querySelectorAll('.editorial-banner').forEach(banner => {
     const text = banner.querySelector('.editorial-text');
     if (!text) return;
     gsap.set(text, { opacity: 0, y: 20 });
@@ -136,11 +231,11 @@ export function initAnimations() {
     });
   });
 
-  // 7. Magnetic WhatsApp button
+  // Magnetic WhatsApp button
   const waBtn = document.querySelector('.payment-box .btn-primary');
-  if (waBtn) {
+  if (waBtn && !isNarrow) {
     let raf = null;
-    waBtn.addEventListener('mousemove', (e) => {
+    waBtn.addEventListener('mousemove', e => {
       if (raf) cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         const rect = waBtn.getBoundingClientRect();
@@ -153,15 +248,21 @@ export function initAnimations() {
       if (raf) cancelAnimationFrame(raf);
       waBtn.style.transform = '';
       waBtn.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-      setTimeout(() => { waBtn.style.transition = ''; }, 300);
+      setTimeout(() => {
+        waBtn.style.transition = '';
+      }, 300);
     });
   }
 
+  ScrollTrigger.refresh();
+}
+
+function setupNav() {
   // Navbar scroll
   ScrollTrigger.create({
     trigger: document.body,
     start: 'top -80px',
-    onUpdate: (self) => {
+    onUpdate: self => {
       const nav = document.getElementById('navbar');
       if (nav) {
         nav.classList.toggle('scrolled', self.progress > 0);
@@ -170,8 +271,8 @@ export function initAnimations() {
   });
 
   const navLinks = document.querySelectorAll('.nav-links a');
-  navLinks.forEach((link) => {
-    link.addEventListener('click', (e) => {
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
       e.preventDefault();
       const target = document.querySelector(link.getAttribute('href'));
       if (target) {
@@ -183,13 +284,13 @@ export function initAnimations() {
   const sections2 = document.querySelectorAll('.section-product');
   const updateActiveLink = () => {
     let current = '';
-    sections2.forEach((sec) => {
+    sections2.forEach(sec => {
       const top = sec.offsetTop - 200;
       if (scrollY >= top) {
         current = '#' + sec.id;
       }
     });
-    navLinks.forEach((a) => {
+    navLinks.forEach(a => {
       a.classList.toggle('active', a.getAttribute('href') === current);
     });
   };
