@@ -225,7 +225,9 @@
           const key = img.dataset.deco;
           if (config[key]) {
             const url = config[key];
-            img.src = url.includes('cloudinary.com') ? url.replace('/upload/', '/upload/f_auto,q_auto:best,w_1600/') : url;
+            // hero ocupa ~50% del viewport; los banners solo ~600px de ancho
+            const w = key === 'hero' ? 1600 : 1200;
+            img.src = url.includes('cloudinary.com') ? url.replace('/upload/', `/upload/f_auto,q_auto:best,w_${w}/`) : url;
           }
         });
       }).catch(() => {});

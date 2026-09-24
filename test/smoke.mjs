@@ -116,6 +116,8 @@ ok('Tarjeta: q_auto:best', /q_auto:best/.test(cardSrc || ''), (cardSrc || '').sl
 ok('Tarjeta: w_800 (Retina)', /w_800/.test(cardSrc || ''), (cardSrc || '').slice(-60));
 const heroSrc = await page.locator('.hero-visual img').first().getAttribute('src');
 ok('Hero: q_auto:best,w_1600', /q_auto:best,w_1600/.test(heroSrc || ''), (heroSrc || '').slice(-60));
+const bannerSrc = await page.locator('.editorial-image img').first().getAttribute('src');
+ok('Banner: q_auto:best,w_1200 (se ve ~600px)', /q_auto:best,w_1200/.test(bannerSrc || ''), (bannerSrc || '').slice(-60));
 const logoSrc = await page.locator('.hero-logo').getAttribute('src');
 ok('Logo: q_auto:best,w_1000', /q_auto:best,w_1000/.test(logoSrc || ''), (logoSrc || '').slice(-60));
 const acercaSrc = await page.locator('.acerca-item img').first().getAttribute('src');
