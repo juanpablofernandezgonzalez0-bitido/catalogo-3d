@@ -1,6 +1,6 @@
 import './style.css';
 import { initScene } from './three-scene.js';
-import { renderProducts, initHeroSlider } from './products.js';
+import { renderProducts } from './products.js';
 
 function hideLoading() {
   const el = document.getElementById('loading');
@@ -15,16 +15,10 @@ try {
 } catch (e) {}
 
 (async () => {
-  let products = [];
   try {
-    products = await renderProducts();
+    await renderProducts();
   } catch (e) {
     console.warn('Render error:', e);
-  }
-  try {
-    initHeroSlider(products || []);
-  } catch (e) {
-    console.warn('Hero slider error:', e);
   }
   hideLoading();
 

@@ -95,16 +95,20 @@ const m = rVisible.transform.match(/matrix\(1, 0, 0, 1, 0, (-?[\d.e+-]+)/);
 const ty = m ? Math.abs(parseFloat(m[1])) : null;
 ok('Reveal se muestra al hover (translateY ~ 0)', ty !== null && ty < 1, rVisible.transform + ' rectH=' + rVisible.rect);
 
-// ── BLOCK 3: hero slider ──
-const slides = await page.locator('.hero-visual .hero-slide').count();
-ok('Hero slides >= 2', slides >= 2, `${slides}`);
-const activeSlides = await page.locator('.hero-visual .hero-slide.is-active').count();
-ok('Exactamente 1 slide activo', activeSlides === 1, `${activeSlides}`);
+// ── HERO: la imagen superior NO debe cambiar ──
+const heroImgs = await page.locator('.hero-visual img').count();
+ok('Hero: exactamente 1 imagen', heroImgs === 1, `${heroImgs}`);
+const slideCls = await page.locator('.hero-visual .hero-slide').count();
+ok('Hero: sin clases de slider', slideCls === 0, `${slideCls}`);
 const hv = await page.locator('.hero-visual').boundingBox();
 ok('hero-visual con altura > 200', hv && hv.height > 200, hv ? Math.round(hv.height) : 'null');
-await page.waitForTimeout(4200);
-const firstActive = await page.locator('.hero-visual .hero-slide').first().evaluate((el) => el.classList.contains('is-active'));
-ok('Slider rota (el 1º deja de ser activo)', firstActive === false, String(firstActive));
+const src0 = await page.locator('.hero-visual img').first().getAttribute('src');
+await page.waitForTimeout(4500);
+const src1 = await page.locator('.hero-visual img').first().getAttribute('src');
+ok('Hero: la imagen no cambia tras 4.5s', src0 === src1, `${src0} -> ${src1}`);
+ok('Hero: sigue siendo la imagen de decoracion', (src1 || '').includes('Unknown-6'), (src1 || '').slice(-40));
+const activeSlides = await page.locator('.hero-visual .hero-slide.is-active').count();
+ok('Hero: 0 slides activos', activeSlides === 0, `${activeSlides}`);
 
 // ── modal ──
 await firstCard.click();
