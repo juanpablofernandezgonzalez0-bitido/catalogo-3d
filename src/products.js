@@ -125,7 +125,7 @@ function renderCard(p) {
   const reveal = p.desc ? `<div class="card-reveal"><p>${esc(p.desc)}</p></div>` : '';
 
   return `
-    <div class="product-card" data-product='${JSON.stringify({ id: p.id, name: p.name, desc: p.desc_larga || p.desc || '', images: Array.isArray(p.images) ? p.images : [p.image || ''].filter(Boolean), prices: p.prices }).replace(/'/g, "&#39;")}'>
+    <div class="product-card" data-product='${JSON.stringify({ id: p.id, name: p.name, desc: p.desc_larga || p.desc || '', images: Array.isArray(p.images) ? p.images : [p.image || ''].filter(Boolean), prices: p.prices }).replace(/&/g, '&amp;').replace(/'/g, '&#39;')}'>
       <div class="card-image-wrap">
         <img src="${optImg(firstImg)}" alt="${esc(p.name)}" loading="lazy" decoding="async">
         ${badge}

@@ -33,8 +33,8 @@ try {
       import('./animations.js'),
       import('gsap/ScrollTrigger'),
     ]);
-    ScrollTrigger.refresh();
     initAnimations();
+    ScrollTrigger.refresh();
   } catch (e) {}
 
   try {
@@ -47,6 +47,7 @@ try {
 })();
 
 function init3DTilt() {
+  if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
   const cards = document.querySelectorAll('.product-card');
   cards.forEach((card) => {
     if (card.dataset.tiltBound) return;
