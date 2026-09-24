@@ -171,9 +171,9 @@ document.addEventListener('click', (e) => {
 
   const ctrl = btn.closest('.cart-qty-ctrl');
   if (!ctrl) {
-    const prices = Array.isArray(productData.prices) ? productData.prices : [];
-    if (!prices.length) return;
-    addToCart(productData, prices[0].label, prices[0].price);
+    // Multi-price: open modal so the customer picks the size
+    const images = Array.isArray(productData.images) ? productData.images : [];
+    openProductModal(productData, images, 0);
     return;
   }
 

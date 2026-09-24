@@ -390,11 +390,15 @@
         renderCart();
       };
 
+      function escHTML(s) {
+        return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      }
+
       function showCartToast(msg, image) {
         const el = document.getElementById('cartToast');
         el.innerHTML = (image ? `<img src="${optImg(image, 80)}" alt="" onerror="this.remove()">` : '') +
-          '<span>' + msg + '</span>' +
-          '<span class="toast-count">' + document.getElementById('cartBadge').textContent + '</span>';
+          '<span>' + escHTML(msg) + '</span>' +
+          '<span class="toast-count">' + escHTML(document.getElementById('cartBadge').textContent) + '</span>';
         el.classList.remove('show');
         void el.offsetWidth;
         el.classList.add('show');
