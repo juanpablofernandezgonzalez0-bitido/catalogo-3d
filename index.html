@@ -234,7 +234,7 @@
 
       window.openProductModal = function(product, images, idx) {
         const otherIdx = images.length > 1 ? 1 : 0;
-        _lbData = { images, idx: otherIdx, prices: product.prices || [] };
+        _lbData = { id: product.id, images, idx: otherIdx, prices: product.prices || [] };
         const lb = document.getElementById('lightbox');
         const src = images[otherIdx] || '';
         document.getElementById('lightboxImg').src = src.includes('cloudinary.com') ? src.replace('/upload/', '/upload/f_auto,q_auto,w_800/') : src;
@@ -243,12 +243,12 @@
         const pricesEl = document.getElementById('lbPrices');
         pricesEl.innerHTML = (product.prices || []).map((pr, i) => `
           <div class="lb-price-row">
-            <span class="lb-label">${pr.label}</span>
+            <span class="lb-label">${escHTML(pr.label)}</span>
             <span class="lb-val">$${pr.price.toLocaleString('es-CO')}</span>
             <span class="lb-actions">
-              <button class="qty-btn" onclick="event.stopPropagation();updateLBCart('${product.id}','${pr.label}',${pr.price},-1)">−</button>
+              <button class="qty-btn" onclick="event.stopPropagation();updateLBCart('${escJSAttr(product.id)}','${escJSAttr(pr.label)}',${Number(pr.price) || 0},-1)">−</button>
               <span class="qty-num" id="lb-qty-${i}">0</span>
-              <button class="qty-btn" onclick="event.stopPropagation();updateLBCart('${product.id}','${pr.label}',${pr.price},1)">+</button>
+              <button class="qty-btn" onclick="event.stopPropagation();updateLBCart('${escJSAttr(product.id)}','${escJSAttr(pr.label)}',${Number(pr.price) || 0},1)">+</button>
             </span>
           </div>`).join('');
         lb.classList.add('active');
@@ -261,12 +261,22 @@
         document.body.style.overflow = '';
       }
 
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const lb = document.getElementById('lightbox');
+        if (lb && lb.classList.contains('active')) { closeLightbox(); return; }
+        const drawer = document.getElementById('cartDrawer');
+        if (drawer && drawer.classList.contains('open')) closeCart();
+        const nav = document.getElementById('navLinks');
+        if (nav && nav.classList.contains('open')) nav.classList.remove('open');
+      });
+
       function updateLBCounters() {
         const cart = window.__cart || [];
         document.querySelectorAll('#lbPrices .lb-price-row').forEach((row, i) => {
           const pr = _lbData.prices ? _lbData.prices[i] : null;
           if (!pr) return;
-          const inCart = cart.find(item => item.label === pr.label);
+          const inCart = cart.find(item => item.id === _lbData.id && item.label === pr.label);
           const span = document.getElementById(`lb-qty-${i}`);
           if (span) span.textContent = inCart ? inCart.qty : 0;
         });
@@ -324,23 +334,24 @@
         footer.style.display = 'block';
         body.innerHTML = items.map(i => `
           <div class="cart-item">
-            <img src="${optImg(i.image, 140) || ''}" alt="${i.name}" loading="lazy" onerror="this.style.display='none'">
+            <img src="${escHTML(optImg(i.image, 140) || '')}" alt="${escHTML(i.name)}" loading="lazy" onerror="this.style.display='none'">
             <div class="cart-item-info">
-              <div class="cart-item-name">${i.name}</div>
-              <div class="cart-item-label">${i.label}</div>
+              <div class="cart-item-name">${escHTML(i.name)}</div>
+              <div class="cart-item-label">${escHTML(i.label)}</div>
               <div class="cart-item-price">$${(i.price * i.qty).toLocaleString('es-CO')}</div>
             </div>
             <div class="cart-item-qty">
-              <button class="qty-btn-sm" onclick="window.__cartRemove('${i.id}','${i.label}')">−</button>
+              <button class="qty-btn-sm" onclick="window.__cartRemove('${escJSAttr(i.id)}','${escJSAttr(i.label)}')">−</button>
               <span>${i.qty}</span>
-              <button class="qty-btn-sm" onclick="window.__cartAdd('${i.id}','${i.label}',${i.price},this.dataset.img)" data-img="${i.image || ''}">+</button>
+              <button class="qty-btn-sm" onclick="window.__cartAdd('${escJSAttr(i.id)}','${escJSAttr(i.label)}',${Number(i.price) || 0},this.dataset.img,this.dataset.name)" data-img="${escHTML(i.image || '')}" data-name="${escHTML(i.name || '')}">+</button>
             </div>
           </div>
         `).join('');
         const total = items.reduce((s, i) => s + i.price * i.qty, 0);
         document.getElementById('cartTotal').textContent = '$' + total.toLocaleString('es-CO');
-        const msg = items.map(i => `• ${i.name} — ${i.label} x${i.qty} = $${(i.price * i.qty).toLocaleString('es-CO')}`).join('%0A');
-        document.getElementById('cartWABtn').href = `https://wa.me/573128281634?text=Hola,%20quiero%20pedir:%0A%0A${msg}%0A%0ATotal:%20$${total.toLocaleString('es-CO')}`;
+        const lines = items.map(i => `• ${i.name} — ${i.label} x${i.qty} = $${(i.price * i.qty).toLocaleString('es-CO')}`);
+        const waText = 'Hola, quiero pedir:\n\n' + lines.join('\n') + '\n\nTotal: $' + total.toLocaleString('es-CO');
+        document.getElementById('cartWABtn').href = 'https://wa.me/573128281634?text=' + encodeURIComponent(waText);
       }
 
       document.addEventListener('cart-added', (e) => {
@@ -367,16 +378,17 @@
 
       document.dispatchEvent(new Event('cart-update'));
 
-      window.__cartAdd = (id, label, price, image) => {
+      window.__cartAdd = (id, label, price, image, name) => {
         const cart = JSON.parse(localStorage.getItem('masss_cart') || '[]');
         const existing = cart.find(i => i.id === id && i.label === label);
         const img = existing ? existing.image : (image || '');
+        const finalName = name || (existing && existing.name) || id;
         if (existing) existing.qty++;
-        else cart.push({ id, name: id, label, price, qty: 1, image: img });
+        else cart.push({ id, name: finalName, label, price, qty: 1, image: img });
         localStorage.setItem('masss_cart', JSON.stringify(cart));
         document.dispatchEvent(new Event('cart-update'));
         renderCart();
-        showCartToast('✓ ' + label + ' agregado', img);
+        showCartToast('✓ ' + finalName + ' — ' + label + ' agregado', img);
       };
 
       window.__cartRemove = (id, label) => {
@@ -392,6 +404,17 @@
 
       function escHTML(s) {
         return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      }
+
+      // Para contenido JS escapado dentro de un atributo HTML onclick="..."
+      function escJSAttr(s) {
+        return String(s)
+          .replace(/\\/g, '\\\\')
+          .replace(/'/g, "\\'")
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
       }
 
       function showCartToast(msg, image) {

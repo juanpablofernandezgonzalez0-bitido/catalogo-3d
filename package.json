@@ -8,9 +8,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server.js",
-    "admin": "npm run build && node server.js"
+    "admin": "npm run build && node server.js",
+    "verify": "node test/smoke.mjs"
   },
   "devDependencies": {
+    "playwright": "^1.63.0",
     "vite": "^8.0.12"
   },
   "dependencies": {
