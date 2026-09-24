@@ -6,6 +6,7 @@ import path from 'node:path';
 const DIST = '/Users/juanpablofernandez/Documents/Landiing/catalogo-3d/dist';
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.json': 'application/json' };
 const API = 'https://catalogo-massscabellos.vercel.app';
+const LIVE = process.env.LIVE === '1';
 
 const server = http.createServer((req, res) => {
   const url = decodeURIComponent(req.url.split('?')[0]);
@@ -28,8 +29,8 @@ const server = http.createServer((req, res) => {
   res.end(fs.readFileSync(f));
 });
 
-await new Promise((r) => server.listen(4321, r));
-const BASE = 'http://localhost:4321';
+if (!LIVE) await new Promise((r) => server.listen(4321, r));
+const BASE = LIVE ? API : 'http://localhost:4321';
 
 const results = [];
 const ok = (name, cond, extra = '') => { results.push({ name, pass: !!cond, extra }); };
@@ -253,7 +254,7 @@ await actx.close();
 ok('Desktop: sin errores JS', consoleErrors.length === 0, consoleErrors.slice(0, 4).join(' | '));
 
 await browser.close();
-server.close();
+if (!LIVE) server.close();
 
 // ── report ──
 let fail = 0;
