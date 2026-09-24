@@ -272,18 +272,27 @@
         });
       }
 
+      function optImg(url, w) {
+        if (!url || !url.includes('cloudinary.com')) return url;
+        return url.replace('/upload/', '/upload/f_auto,q_auto,w_' + (w || 140) + '/');
+      }
+
       function updateLBCart(id, label, price, delta) {
-        if (!window.__cart) window.__cart = [];
-        const item = window.__cart.find(i => i.id === id && i.label === label);
+        let cart = JSON.parse(localStorage.getItem('masss_cart') || '[]');
+        const item = cart.find(i => i.id === id && i.label === label);
+        const img = _lbData.images[0] || '';
+        const name = document.getElementById('lbName').textContent;
         if (item) {
           item.qty = Math.max(0, item.qty + delta);
-          if (item.qty === 0) window.__cart = window.__cart.filter(i => i !== item);
+          if (item.qty === 0) cart = cart.filter(i => i !== item);
         } else if (delta > 0) {
-          window.__cart.push({ id, label, price, qty: 1, name: document.getElementById('lbName').textContent, image: _lbData.images[0] || '' });
+          cart.push({ id, label, price, qty: 1, name, image: img });
         }
-        window.dispatchEvent(new CustomEvent('cart-update'));
+        localStorage.setItem('masss_cart', JSON.stringify(cart));
+        document.dispatchEvent(new CustomEvent('cart-update'));
         updateLBCounters();
         renderCart();
+        if (delta > 0) showCartToast('✓ ' + name + ' — ' + label + ' agregado', img);
       }
 
       document.getElementById('lightbox').addEventListener('click', (e) => {
@@ -315,7 +324,7 @@
         footer.style.display = 'block';
         body.innerHTML = items.map(i => `
           <div class="cart-item">
-            <img src="${i.image || ''}" alt="${i.name}" onerror="this.style.display='none'">
+            <img src="${optImg(i.image, 140) || ''}" alt="${i.name}" loading="lazy" onerror="this.style.display='none'">
             <div class="cart-item-info">
               <div class="cart-item-name">${i.name}</div>
               <div class="cart-item-label">${i.label}</div>
@@ -324,7 +333,7 @@
             <div class="cart-item-qty">
               <button class="qty-btn-sm" onclick="window.__cartRemove('${i.id}','${i.label}')">−</button>
               <span>${i.qty}</span>
-              <button class="qty-btn-sm" onclick="window.__cartAdd('${i.id}','${i.label}',${i.price})">+</button>
+              <button class="qty-btn-sm" onclick="window.__cartAdd('${i.id}','${i.label}',${i.price},this.dataset.img)" data-img="${i.image || ''}">+</button>
             </div>
           </div>
         `).join('');
@@ -335,8 +344,8 @@
       }
 
       document.addEventListener('cart-added', (e) => {
-        const { name, label } = e.detail;
-        showCartToast(`✓ ${name} — ${label} agregado`);
+        const { name, label, image } = e.detail;
+        showCartToast('✓ ' + name + ' — ' + label + ' agregado', image);
       });
 
       document.getElementById('cartToggle').addEventListener('click', openCart);
@@ -345,21 +354,29 @@
         const cart = JSON.parse(localStorage.getItem('masss_cart') || '[]');
         window.__cart = cart;
         const count = cart.reduce((s, i) => s + i.qty, 0);
-        document.getElementById('cartBadge').textContent = count;
-        document.getElementById('cartBadge').style.display = count ? 'flex' : 'none';
+        const badge = document.getElementById('cartBadge');
+        const prev = parseInt(badge.textContent) || 0;
+        badge.textContent = count;
+        badge.style.display = count ? 'flex' : 'none';
+        if (count > prev) {
+          badge.classList.remove('pop');
+          void badge.offsetWidth;
+          badge.classList.add('pop');
+        }
       });
 
       document.dispatchEvent(new Event('cart-update'));
 
-      window.__cartAdd = (id, label, price) => {
+      window.__cartAdd = (id, label, price, image) => {
         const cart = JSON.parse(localStorage.getItem('masss_cart') || '[]');
         const existing = cart.find(i => i.id === id && i.label === label);
+        const img = existing ? existing.image : (image || '');
         if (existing) existing.qty++;
-        else cart.push({ id, name: id, label, price, qty: 1, image: '' });
+        else cart.push({ id, name: id, label, price, qty: 1, image: img });
         localStorage.setItem('masss_cart', JSON.stringify(cart));
         document.dispatchEvent(new Event('cart-update'));
         renderCart();
-        showCartToast(`✓ ${label} agregado`);
+        showCartToast('✓ ' + label + ' agregado', img);
       };
 
       window.__cartRemove = (id, label) => {
@@ -373,14 +390,16 @@
         renderCart();
       };
 
-      function showCartToast(msg) {
+      function showCartToast(msg, image) {
         const el = document.getElementById('cartToast');
-        el.textContent = msg;
+        el.innerHTML = (image ? `<img src="${optImg(image, 80)}" alt="" onerror="this.remove()">` : '') +
+          '<span>' + msg + '</span>' +
+          '<span class="toast-count">' + document.getElementById('cartBadge').textContent + '</span>';
         el.classList.remove('show');
         void el.offsetWidth;
         el.classList.add('show');
         clearTimeout(el._timer);
-        el._timer = setTimeout(() => el.classList.remove('show'), 2000);
+        el._timer = setTimeout(() => el.classList.remove('show'), 2400);
       }
 
       const toggle = document.getElementById('navToggle');

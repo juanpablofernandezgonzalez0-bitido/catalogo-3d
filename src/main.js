@@ -1,6 +1,6 @@
 import './style.css';
 import { initScene } from './three-scene.js';
-import { renderProducts } from './products.js';
+import { renderProducts, initHeroSlider } from './products.js';
 
 function hideLoading() {
   const el = document.getElementById('loading');
@@ -15,10 +15,16 @@ try {
 } catch (e) {}
 
 (async () => {
+  let products = [];
   try {
-    await renderProducts();
+    products = await renderProducts();
   } catch (e) {
     console.warn('Render error:', e);
+  }
+  try {
+    initHeroSlider(products || []);
+  } catch (e) {
+    console.warn('Hero slider error:', e);
   }
   hideLoading();
 
@@ -37,11 +43,14 @@ try {
   } catch (e) {}
 
   init3DTilt();
+  document.addEventListener('products-rendered', init3DTilt);
 })();
 
 function init3DTilt() {
   const cards = document.querySelectorAll('.product-card');
   cards.forEach((card) => {
+    if (card.dataset.tiltBound) return;
+    card.dataset.tiltBound = '1';
     let raf = null;
     card.addEventListener('mousemove', (e) => {
       if (raf) cancelAnimationFrame(raf);

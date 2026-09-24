@@ -59,11 +59,11 @@ export function initAnimations() {
 
   // 3. Parallax (desktop only — mobile stays light)
   if (!isNarrow) {
-    // Hero background image
-    const heroImg = document.querySelector('.hero-visual img');
-    if (heroImg) {
-      gsap.set(heroImg, { scale: 1.14 });
-      gsap.to(heroImg, {
+    // Hero background images (slider slides)
+    const heroSlides = document.querySelectorAll('.hero-visual img');
+    if (heroSlides.length) {
+      gsap.set(heroSlides, { scale: 1.14 });
+      gsap.to(heroSlides, {
         yPercent: 6,
         ease: 'none',
         scrollTrigger: {

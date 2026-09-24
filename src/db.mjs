@@ -26,14 +26,16 @@ function toProduct(row) {
   const { sort_order, description, ...rest } = row;
   let desc = description ?? '';
   let desc_larga = '';
+  let badge = '';
   if (typeof description === 'string' && description.startsWith('{') && description.includes('"dl"')) {
     try {
       const parsed = JSON.parse(description);
       desc = parsed.d ?? '';
       desc_larga = parsed.dl ?? '';
+      badge = parsed.b ?? '';
     } catch {}
   }
-  return { ...rest, order: sort_order, desc, desc_larga };
+  return { ...rest, order: sort_order, desc, desc_larga, badge };
 }
 
 export async function getProducts() {
@@ -46,14 +48,29 @@ export async function getProduct(id) {
   return rows.length ? toProduct(rows[0]) : null;
 }
 
-function toRow(data) {
-  const { order: o, desc: d, desc_larga: dl, ...rest } = data;
+function parseDescBase(base) {
+  if (typeof base === 'string' && base.startsWith('{') && base.includes('"dl"')) {
+    try {
+      const p = JSON.parse(base);
+      return { d: p.d ?? '', dl: p.dl ?? '', b: p.b ?? '' };
+    } catch {}
+  }
+  return { d: typeof base === 'string' ? base : '', dl: '', b: '' };
+}
+
+function toRow(data, base) {
+  const { order: o, desc: d, desc_larga: dl, badge: bg, ...rest } = data;
   const row = { ...rest };
   if (o !== undefined) row.sort_order = o;
-  if (dl !== undefined && dl.trim() !== '') {
-    row.description = JSON.stringify({ d: d ?? '', dl });
-  } else if (d !== undefined) {
-    row.description = d;
+
+  if (d !== undefined || dl !== undefined || bg !== undefined) {
+    const cur = parseDescBase(base);
+    if (d !== undefined) cur.d = d;
+    if (dl !== undefined) cur.dl = dl;
+    if (bg !== undefined) cur.b = bg;
+    row.description = cur.dl || cur.b
+      ? JSON.stringify({ d: cur.d, dl: cur.dl || '', b: cur.b || '' })
+      : cur.d;
   }
   return row;
 }
@@ -76,7 +93,12 @@ export async function createProduct(data) {
 }
 
 export async function updateProduct(id, data) {
-  const body = toRow(data);
+  let base;
+  if (data.desc !== undefined || data.desc_larga !== undefined || data.badge !== undefined) {
+    const cur = await supabase('GET', `products?id=eq.${id}&select=description`);
+    base = cur && cur[0] ? cur[0].description : undefined;
+  }
+  const body = toRow(data, base);
   const [row] = await supabase('PATCH', `products?id=eq.${id}`, {
     body,
     headers: { 'Prefer': 'return=representation' },

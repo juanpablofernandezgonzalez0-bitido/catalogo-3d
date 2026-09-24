@@ -29,7 +29,9 @@ export function addToCart(product, label, price) {
     });
   }
   saveCart(items);
-  document.dispatchEvent(new CustomEvent('cart-added', { detail: { name: product.name, label } }));
+  document.dispatchEvent(new CustomEvent('cart-added', {
+    detail: { name: product.name, label, image: items.find(i => i.id === product.id && i.label === label)?.image || '' },
+  }));
 }
 
 export function removeFromCart(productId, label) {

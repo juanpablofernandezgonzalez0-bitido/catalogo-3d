@@ -219,6 +219,15 @@
       <div class="form-group">
         <label>Descripción larga (modal)</label>
         <textarea id="edit-desc-larga" placeholder="Descripción detallada que aparece en la ventana del producto" rows="3"></textarea>
+
+        <label>Badge de la tarjeta (opcional)</label>
+        <select id="edit-badge" style="width:100%;padding:0.6rem;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.95rem;background:#fff">
+          <option value="">Sin badge</option>
+          <option value="Más vendido">Más vendido</option>
+          <option value="Nuevo">Nuevo</option>
+          <option value="Oferta">Oferta</option>
+          <option value="Destacado">Destacado</option>
+        </select>
       </div>
       <div class="form-group">
         <label>Imágenes</label>
@@ -331,6 +340,7 @@
         document.getElementById('edit-category').value = p.category || 'producto';
 document.getElementById('edit-desc').value = p.desc;
         document.getElementById('edit-desc-larga').value = p.desc_larga || '';
+        document.getElementById('edit-badge').value = p.badge || '';
         currentImages = Array.isArray(p.images) ? [...p.images] : [p.image || p.images || ''].filter(Boolean);
         renderImageThumbs();
         renderPrices(p.prices);
@@ -342,6 +352,7 @@ document.getElementById('edit-desc').value = p.desc;
         document.getElementById('edit-category').value = 'producto';
         document.getElementById('edit-desc').value = '';
         document.getElementById('edit-desc-larga').value = '';
+        document.getElementById('edit-badge').value = '';
         currentImages = [];
         renderImageThumbs();
         renderPrices([{ label: '', price: 0 }]);
@@ -360,6 +371,7 @@ document.getElementById('edit-desc').value = p.desc;
       document.getElementById('edit-category').value = p.category || 'producto';
 document.getElementById('edit-desc').value = p.desc;
       document.getElementById('edit-desc-larga').value = p.desc_larga || '';
+      document.getElementById('edit-badge').value = p.badge || '';
       currentImages = Array.isArray(p.images) ? [...p.images] : [p.image || ''].filter(Boolean);
       renderImageThumbs();
       renderPrices(p.prices);
@@ -491,7 +503,7 @@ document.getElementById('edit-desc').value = p.desc;
       });
       if (prices.length === 0) { alert('Agrega al menos un precio'); return; }
 
-      const body = { name, category, desc, desc_larga: descLarga, images: currentImages, prices };
+      const body = { name, category, desc, desc_larga: descLarga, badge: document.getElementById('edit-badge').value, images: currentImages, prices };
       let res;
       if (id) {
         res = await fetch('/api/products/' + id, {

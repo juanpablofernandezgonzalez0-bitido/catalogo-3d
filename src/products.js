@@ -5,10 +5,29 @@ function optImg(url, w = 400) {
   return url.replace('/upload/', `/upload/f_auto,q_auto,w_${w}/`);
 }
 
+function esc(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+let ALL_PRODUCTS = [];
+let activeFilter = 'producto';
+
+const FILTERS = [
+  { key: 'producto', label: 'Producto' },
+  { key: 'viajero', label: 'Kit Viajero' },
+  { key: 'accesorio', label: 'Accesorios' },
+];
+
 export async function renderProducts() {
   try {
     const res = await fetch('/api/products');
     const products = await res.json();
+    ALL_PRODUCTS = products;
 
     const groups = { producto: [], viajero: [], accesorio: [] };
     products.forEach(p => {
@@ -16,22 +35,76 @@ export async function renderProducts() {
       if (groups[cat]) groups[cat].push(p);
     });
 
-    for (const [cat, items] of Object.entries(groups)) {
-      const grid = document.getElementById(`grid-${cat === 'viajero' ? 'viajeros' : cat === 'accesorio' ? 'accesorios' : 'productos'}`);
-      if (!grid) continue;
-      grid.innerHTML = items.length
-        ? items.map(p => renderCard(p)).join('')
-        : `<p class="empty-cat" style="grid-column:1/-1;text-align:center;color:#999;padding:2rem">Próximamente</p>`;
-    }
+    fillGrid('grid-productos', groups.producto);
+    fillGrid('grid-viajeros', groups.viajero);
+    fillGrid('grid-accesorios', groups.accesorio);
+
+    renderFilterBar();
 
     document.dispatchEvent(new CustomEvent('cart-update'));
+    return products;
   } catch (e) {
     console.warn('Error loading products:', e);
+    return [];
   }
 }
 
+function fillGrid(id, items) {
+  const grid = document.getElementById(id);
+  if (!grid) return;
+  grid.innerHTML = items.length
+    ? items.map(p => renderCard(p)).join('')
+    : `<p class="empty-cat" style="grid-column:1/-1;text-align:center;color:#999;padding:2rem">Próximamente</p>`;
+}
+
+function renderFilterBar() {
+  const grid = document.getElementById('grid-productos');
+  if (!grid || document.getElementById('filterBar')) return;
+
+  const bar = document.createElement('div');
+  bar.className = 'filter-bar';
+  bar.id = 'filterBar';
+  bar.innerHTML = FILTERS.map(
+    f => `<button class="filter-chip${f.key === activeFilter ? ' active' : ''}" data-filter="${f.key}">${f.label}</button>`
+  ).join('');
+
+  grid.parentElement.insertBefore(bar, grid);
+
+  bar.addEventListener('click', e => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip || chip.dataset.filter === activeFilter) return;
+    activeFilter = chip.dataset.filter;
+    bar.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c === chip));
+    applyFilter();
+  });
+}
+
+function applyFilter() {
+  const grid = document.getElementById('grid-productos');
+  if (!grid) return;
+
+  const items = ALL_PRODUCTS.filter(p => (p.category || 'producto') === activeFilter);
+
+  grid.classList.add('filtering');
+
+  setTimeout(() => {
+    grid.innerHTML = items.length
+      ? items.map(p => renderCard(p)).join('')
+      : `<p class="empty-cat" style="grid-column:1/-1;text-align:center;color:#999;padding:2rem">Próximamente</p>`;
+
+    grid.classList.remove('filtering');
+    grid.classList.add('filter-enter');
+
+    const cards = grid.querySelectorAll('.product-card');
+    cards.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 45));
+
+    setTimeout(() => grid.classList.remove('filter-enter'), 600);
+    document.dispatchEvent(new CustomEvent('cart-update'));
+    document.dispatchEvent(new CustomEvent('products-rendered'));
+  }, 220);
+}
+
 function renderCard(p) {
-  const cart = getCart();
   const images = Array.isArray(p.images) ? p.images : [p.image || p.images || ''].filter(Boolean);
   const firstImg = images[0] || '';
 
@@ -43,20 +116,25 @@ function renderCard(p) {
   const single = prices.length === 1 ? prices[0] : null;
 
   const addBtn = single
-    ? `<div class="cart-qty-ctrl" data-id="${p.id}" data-label="${single.label}" data-price="${single.price}"></div>`
+    ? `<div class="cart-qty-ctrl" data-id="${p.id}" data-label="${esc(single.label)}" data-price="${single.price}"></div>`
     : prices.length > 1
       ? `<button class="add-cart-btn">Añadir</button>`
       : '';
 
+  const badge = p.badge ? `<span class="card-badge">${esc(p.badge)}</span>` : '';
+  const reveal = p.desc ? `<div class="card-reveal"><p>${esc(p.desc)}</p></div>` : '';
+
   return `
     <div class="product-card" data-product='${JSON.stringify({ id: p.id, name: p.name, desc: p.desc_larga || p.desc || '', images: Array.isArray(p.images) ? p.images : [p.image || ''].filter(Boolean), prices: p.prices }).replace(/'/g, "&#39;")}'>
       <div class="card-image-wrap">
-        <img src="${optImg(firstImg)}" alt="${p.name}" loading="lazy" decoding="async">
+        <img src="${optImg(firstImg)}" alt="${esc(p.name)}" loading="lazy" decoding="async">
+        ${badge}
+        ${reveal}
         <div class="card-overlay"></div>
       </div>
       <div class="card-info">
         <div class="card-info-top">
-          <h3>${p.name}</h3>
+          <h3>${esc(p.name)}</h3>
           <span class="card-price">${priceLabel}</span>
         </div>
         ${addBtn}
@@ -65,9 +143,17 @@ function renderCard(p) {
   `;
 }
 
+const isCoarse = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
 document.addEventListener('click', (e) => {
   const card = e.target.closest('.product-card');
   if (!card || e.target.closest('.qty-btn') || e.target.closest('.cart-qty-ctrl') || e.target.closest('.add-cart-btn')) return;
+
+  if (isCoarse && card.querySelector('.card-reveal') && !card.classList.contains('revealed')) {
+    card.classList.add('revealed');
+    return;
+  }
+
   let productData;
   try { productData = JSON.parse(card.dataset.product); } catch {}
   if (!productData) return;
@@ -78,19 +164,26 @@ document.addEventListener('click', (e) => {
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('.qty-btn, .add-cart-btn');
   if (!btn) return;
-  const ctrl = btn.closest('.cart-qty-ctrl');
-  if (!ctrl) return;
   const card = btn.closest('.product-card');
+  let productData;
+  try { productData = JSON.parse(card.dataset.product); } catch {}
+  if (!productData) return;
+
+  const ctrl = btn.closest('.cart-qty-ctrl');
+  if (!ctrl) {
+    const prices = Array.isArray(productData.prices) ? productData.prices : [];
+    if (!prices.length) return;
+    addToCart(productData, prices[0].label, prices[0].price);
+    return;
+  }
+
   const id = ctrl.dataset.id;
   const label = ctrl.dataset.label;
   const price = parseInt(ctrl.dataset.price);
-  let productData;
-  try { productData = JSON.parse(card.dataset.product); } catch {}
-  if (!productData) productData = { id, name: id, images: [] };
-  if (btn.dataset.action === 'add') {
-    addToCart(productData, label, price);
-  } else {
+  if (btn.dataset.action === 'remove') {
     removeFromCart(productData.id, label);
+  } else {
+    addToCart(productData, label, price);
   }
 });
 
@@ -106,3 +199,40 @@ document.addEventListener('cart-update', () => {
       : `<button class="add-cart-btn" data-action="add">Añadir</button>`;
   });
 });
+
+// ─── HERO SLIDER ───
+export function initHeroSlider(products) {
+  const visual = document.querySelector('.hero-visual');
+  if (!visual || !products.length) return;
+
+  const first = visual.querySelector('img');
+  if (first) first.classList.add('hero-slide', 'is-active');
+
+  const urls = products
+    .map(p => (Array.isArray(p.images) ? p.images[0] : p.image) || '')
+    .filter(u => u.includes('cloudinary.com'))
+    .slice(0, 5);
+
+  const frag = document.createDocumentFragment();
+  urls.forEach(u => {
+    const img = document.createElement('img');
+    img.className = 'hero-slide';
+    img.alt = 'Producto destacado';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.src = u.replace('/upload/', '/upload/f_auto,q_auto,w_900/');
+    frag.appendChild(img);
+  });
+  visual.appendChild(frag);
+
+  const slides = visual.querySelectorAll('.hero-slide');
+  if (slides.length < 2) return;
+
+  let i = 0;
+  setInterval(() => {
+    if (document.hidden) return;
+    slides[i].classList.remove('is-active');
+    i = (i + 1) % slides.length;
+    slides[i].classList.add('is-active');
+  }, 3800);
+}
