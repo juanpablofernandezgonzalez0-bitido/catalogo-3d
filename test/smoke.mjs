@@ -110,6 +110,22 @@ ok('Hero: sigue siendo la imagen de decoracion', (src1 || '').includes('Unknown-
 const activeSlides = await page.locator('.hero-visual .hero-slide.is-active').count();
 ok('Hero: 0 slides activos', activeSlides === 0, `${activeSlides}`);
 
+// ── CALIDAD DE IMÁGENES ──
+const cardSrc = await page.locator('#grid-productos .product-card .card-image-wrap img').first().getAttribute('src');
+ok('Tarjeta: q_auto:best', /q_auto:best/.test(cardSrc || ''), (cardSrc || '').slice(-60));
+ok('Tarjeta: w_800 (Retina)', /w_800/.test(cardSrc || ''), (cardSrc || '').slice(-60));
+const heroSrc = await page.locator('.hero-visual img').first().getAttribute('src');
+ok('Hero: q_auto:best,w_1600', /q_auto:best,w_1600/.test(heroSrc || ''), (heroSrc || '').slice(-60));
+const logoSrc = await page.locator('.hero-logo').getAttribute('src');
+ok('Logo: q_auto:best,w_1000', /q_auto:best,w_1000/.test(logoSrc || ''), (logoSrc || '').slice(-60));
+const acercaSrc = await page.locator('.acerca-item img').first().getAttribute('src');
+ok('Acerca: q_auto:best,w_600', /q_auto:best,w_600/.test(acercaSrc || ''), (acercaSrc || '').slice(-60));
+const anyQ = await page.evaluate(() => {
+  const urls = [...document.images].map(i => i.src).filter(u => u.includes('cloudinary.com'));
+  return { total: urls.length, bad: urls.filter(u => !u.includes('q_auto:best')).length };
+});
+ok('Ninguna imagen con calidad automática', anyQ.bad === 0, `${anyQ.bad}/${anyQ.total} fuera de especificación`);
+
 // ── modal ──
 await firstCard.click();
 await page.waitForTimeout(600);

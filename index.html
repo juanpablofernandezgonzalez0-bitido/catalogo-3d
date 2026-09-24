@@ -37,7 +37,7 @@
         <div class="hero-inner">
           <div class="hero-text">
             <span class="hero-badge">Catálogo 2026</span>
-            <img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto,w_400/v1783451763/masss_catalog/misc/logo.png" alt="Massscabellos" class="hero-logo" fetchpriority="high" decoding="async">
+            <img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto:best,w_1000/v1783451763/masss_catalog/misc/logo.png" alt="Massscabellos" class="hero-logo" fetchpriority="high" decoding="async">
             <p class="hero-subtitle">Productos naturales para el cuidado capilar</p>
             <a href="#productos" class="btn-primary">Explorar productos</a>
           </div>
@@ -124,14 +124,14 @@
           </div>
 
           <div class="acerca-gallery">
-            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto,w_500/masss_catalog/acerca/acerca_1.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
-            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto,w_500/masss_catalog/acerca/acerca_2.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
-            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto,w_500/masss_catalog/acerca/acerca_3.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
-            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto,w_500/masss_catalog/acerca/acerca_4.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
-            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto,w_500/masss_catalog/acerca/acerca_5.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
-            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto,w_500/masss_catalog/acerca/acerca_6.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
-            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto,w_500/masss_catalog/acerca/acerca_7.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
-            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto,w_500/masss_catalog/acerca/acerca_8.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
+            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto:best,w_600/masss_catalog/acerca/acerca_1.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
+            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto:best,w_600/masss_catalog/acerca/acerca_2.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
+            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto:best,w_600/masss_catalog/acerca/acerca_3.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
+            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto:best,w_600/masss_catalog/acerca/acerca_4.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
+            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto:best,w_600/masss_catalog/acerca/acerca_5.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
+            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto:best,w_600/masss_catalog/acerca/acerca_6.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
+            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto:best,w_600/masss_catalog/acerca/acerca_7.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
+            <div class="acerca-item"><img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto:best,w_600/masss_catalog/acerca/acerca_8.png" alt="Acerca de nuestros productos" loading="lazy" decoding="async"></div>
           </div>
         </div>
       </section>
@@ -225,7 +225,7 @@
           const key = img.dataset.deco;
           if (config[key]) {
             const url = config[key];
-            img.src = url.includes('cloudinary.com') ? url.replace('/upload/', '/upload/f_auto,q_auto,w_1200/') : url;
+            img.src = url.includes('cloudinary.com') ? url.replace('/upload/', '/upload/f_auto,q_auto:best,w_1600/') : url;
           }
         });
       }).catch(() => {});
@@ -237,7 +237,7 @@
         _lbData = { id: product.id, images, idx: otherIdx, prices: product.prices || [] };
         const lb = document.getElementById('lightbox');
         const src = images[otherIdx] || '';
-        document.getElementById('lightboxImg').src = src.includes('cloudinary.com') ? src.replace('/upload/', '/upload/f_auto,q_auto,w_800/') : src;
+        document.getElementById('lightboxImg').src = src.includes('cloudinary.com') ? src.replace('/upload/', '/upload/f_auto,q_auto:best,w_1600/') : src;
         document.getElementById('lbName').textContent = product.name || '';
         document.getElementById('lbDesc').textContent = product.desc || '';
         const pricesEl = document.getElementById('lbPrices');
@@ -284,7 +284,7 @@
 
       function optImg(url, w) {
         if (!url || !url.includes('cloudinary.com')) return url;
-        return url.replace('/upload/', '/upload/f_auto,q_auto,w_' + (w || 140) + '/');
+        return url.replace('/upload/', '/upload/f_auto,q_auto:best,w_' + (w || 160) + '/');
       }
 
       function updateLBCart(id, label, price, delta) {
@@ -334,7 +334,7 @@
         footer.style.display = 'block';
         body.innerHTML = items.map(i => `
           <div class="cart-item">
-            <img src="${escHTML(optImg(i.image, 140) || '')}" alt="${escHTML(i.name)}" loading="lazy" onerror="this.style.display='none'">
+            <img src="${escHTML(optImg(i.image, 160) || '')}" alt="${escHTML(i.name)}" loading="lazy" onerror="this.style.display='none'">
             <div class="cart-item-info">
               <div class="cart-item-name">${escHTML(i.name)}</div>
               <div class="cart-item-label">${escHTML(i.label)}</div>
@@ -419,7 +419,7 @@
 
       function showCartToast(msg, image) {
         const el = document.getElementById('cartToast');
-        el.innerHTML = (image ? `<img src="${optImg(image, 80)}" alt="" onerror="this.remove()">` : '') +
+        el.innerHTML = (image ? `<img src="${optImg(image, 160)}" alt="" onerror="this.remove()">` : '') +
           '<span>' + escHTML(msg) + '</span>' +
           '<span class="toast-count">' + escHTML(document.getElementById('cartBadge').textContent) + '</span>';
         el.classList.remove('show');
