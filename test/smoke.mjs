@@ -276,6 +276,15 @@ p2.on('pageerror', (e) => rmErrors.push(e.message));
 await p2.goto(BASE + '/', { waitUntil: 'networkidle' });
 await p2.waitForTimeout(1500);
 ok('prefers-reduced-motion sin errores', rmErrors.length === 0, rmErrors.slice(0, 3).join(' | '));
+const rmFit = await p2.evaluate(() => {
+  const item = document.querySelector('.acerca-item');
+  const img = item && item.querySelector('img');
+  if (!img) return { ok: false, msg: 'sin img' };
+  const i = item.getBoundingClientRect(), g = img.getBoundingClientRect();
+  const ow = Math.round(g.width - i.width), oh = Math.round(g.height - i.height);
+  return { ok: ow <= 4 && oh <= 4, msg: `overflow ${ow}x${oh}px` };
+});
+ok('Reduced-motion: img del carrusel llena su item (sin zoom)', rmFit.ok === true, rmFit.msg);
 await ctx2.close();
 
 // ── MOBILE ──
@@ -315,6 +324,18 @@ ok('Mobile: carrusel presente', (await mp.locator('.acerca-carousel .acerca-trac
 const mgb = await mp.locator('.acerca-gallery').boundingBox();
 const miw = await mp.locator('.acerca-item').first().evaluate(el => el.getBoundingClientRect().width);
 ok('Mobile: 1.5 items visibles (item < galeria)', miw > 0 && miw < mgb.width * 0.9, `${Math.round(miw)} de ${Math.round(mgb.width)}`);
+const mFit = await mp.evaluate(() => {
+  let bad = 0, worst = 0;
+  document.querySelectorAll('.acerca-item').forEach(it => {
+    const img = it.querySelector('img');
+    if (!img) return;
+    const i = it.getBoundingClientRect(), g = img.getBoundingClientRect();
+    const ow = g.width - i.width, oh = g.height - i.height;
+    if (ow > 4 || oh > 4) { bad++; worst = Math.max(worst, ow, oh); }
+  });
+  return { bad, worst: Math.round(worst) };
+});
+ok('Mobile: imgs del carrusel sin zoom (caben en su item)', mFit.bad === 0, `bad=${mFit.bad} overflow=${mFit.worst}px`);
 ok('Mobile: carrusel no desborda la pagina', (await mp.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)) <= 0);
 ok('Mobile: sin errores JS', mobileErrors.length === 0, mobileErrors.slice(0, 3).join(' | '));
 await mctx.close();
