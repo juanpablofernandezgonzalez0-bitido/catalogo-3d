@@ -128,6 +128,62 @@ const anyQ = await page.evaluate(() => {
 });
 ok('Ninguna imagen con calidad automática', anyQ.bad === 0, `${anyQ.bad}/${anyQ.total} fuera de especificación`);
 
+// ── CARRUSEL ACERCA ──
+await page.evaluate(() => window.scrollTo(0, 0));
+await page.mouse.move(5, 5);
+ok('Carrusel acerca presente', (await page.locator('.acerca-carousel').count()) === 1);
+const trackKids = await page.locator('.acerca-track > *').count();
+ok('Track con clones (16)', trackKids === 16, `${trackKids}`);
+const clones = await page.locator('.acerca-track > [data-clone]').count();
+ok('8 clones para bucle infinito', clones === 8, `${clones}`);
+ok('8 puntos de navegacion', (await page.locator('.acerca-dot').count()) === 8);
+ok('Clones visibles sin parpadeo', await page.locator('.acerca-track > [data-clone]').first().evaluate(el => el.classList.contains('visible')));
+const box = await page.locator('.acerca-gallery').boundingBox();
+const w0 = await page.locator('.acerca-item').first().evaluate(el => el.getBoundingClientRect().width);
+ok('Items con ancho de carrusel (< galeria)', w0 > 0 && w0 < box.width, `${Math.round(w0)} de ${Math.round(box.width)}`);
+
+const x0 = await page.locator('.acerca-track').evaluate(el => el.style.transform);
+await page.waitForTimeout(4500);
+const x1 = await page.locator('.acerca-track').evaluate(el => el.style.transform);
+ok('Auto-avance del carrusel', x0 !== x1, `${x0} -> ${x1}`);
+
+await page.locator('.acerca-carousel').hover();
+await page.locator('.acerca-dot').first().click();
+await page.waitForTimeout(950);
+const dot0 = await page.evaluate(() => [...document.querySelectorAll('.acerca-dot')].findIndex(d => d.getAttribute('aria-selected') === 'true'));
+ok('Punto 0 activo tras clic', dot0 === 0, String(dot0));
+const xD = await page.locator('.acerca-track').evaluate(el => el.style.transform);
+ok('Clic en punto mueve el track', xD.includes('translate3d(0px'), xD);
+
+for (let i = 0; i < 8; i++) { await page.locator('.acerca-next').click(); await page.waitForTimeout(900); }
+const afterLoop = await page.evaluate(() => [...document.querySelectorAll('.acerca-dot')].findIndex(d => d.getAttribute('aria-selected') === 'true'));
+ok('Bucle infinito vuelve al inicio (8 pasos)', afterLoop === 0, String(afterLoop));
+
+const xPrev = await page.locator('.acerca-track').evaluate(el => el.style.transform);
+await page.locator('.acerca-prev').click();
+await page.waitForTimeout(950);
+const xPrev2 = await page.locator('.acerca-track').evaluate(el => el.style.transform);
+ok('Flecha anterior mueve el carrusel', xPrev !== xPrev2, `${xPrev} -> ${xPrev2}`);
+
+await page.locator('.acerca-gallery').scrollIntoViewIfNeeded();
+await page.waitForTimeout(400);
+const gb = await page.locator('.acerca-gallery').boundingBox();
+const inView = gb && gb.y >= 0 && gb.y + gb.height <= 900;
+ok('Galeria visible antes del arrastre', inView, gb ? `y=${Math.round(gb.y)} h=${Math.round(gb.height)}` : 'null');
+await page.locator('.acerca-dot').first().click();
+await page.waitForTimeout(950);
+const xDrag = await page.locator('.acerca-track').evaluate(el => el.style.transform);
+if (inView) {
+  await page.mouse.move(gb.x + gb.width * 0.55, gb.y + gb.height * 0.5);
+  await page.mouse.down();
+  await page.mouse.move(gb.x + gb.width * 0.55 - 340, gb.y + gb.height * 0.5, { steps: 14 });
+  await page.mouse.up();
+  await page.waitForTimeout(1100);
+}
+const xDrag2 = await page.locator('.acerca-track').evaluate(el => el.style.transform);
+ok('Arrastre mueve el carrusel', xDrag !== xDrag2, `${xDrag} -> ${xDrag2}`);
+await page.mouse.move(5, 5);
+
 // ── modal ──
 await firstCard.click();
 await page.waitForTimeout(600);
@@ -255,6 +311,11 @@ if (hasReveal) {
 } else {
   ok('Mobile: reveal en cards', false, 'sin reveal');
 }
+ok('Mobile: carrusel presente', (await mp.locator('.acerca-carousel .acerca-track > *').count()) === 16);
+const mgb = await mp.locator('.acerca-gallery').boundingBox();
+const miw = await mp.locator('.acerca-item').first().evaluate(el => el.getBoundingClientRect().width);
+ok('Mobile: 1.5 items visibles (item < galeria)', miw > 0 && miw < mgb.width * 0.9, `${Math.round(miw)} de ${Math.round(mgb.width)}`);
+ok('Mobile: carrusel no desborda la pagina', (await mp.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)) <= 0);
 ok('Mobile: sin errores JS', mobileErrors.length === 0, mobileErrors.slice(0, 3).join(' | '));
 await mctx.close();
 

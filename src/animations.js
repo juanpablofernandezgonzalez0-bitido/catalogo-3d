@@ -206,7 +206,7 @@ export function initAnimations() {
     });
   });
 
-  const acercaItems = document.querySelectorAll('.acerca-item');
+  const acercaItems = document.querySelectorAll('.acerca-item:not([data-clone])');
   acercaItems.forEach((el, i) => {
     ScrollTrigger.create({
       trigger: el,

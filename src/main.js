@@ -23,10 +23,12 @@ try {
   hideLoading();
 
   try {
-    const [{ initAnimations }, { ScrollTrigger }] = await Promise.all([
+    const [{ initAcercaCarousel }, { initAnimations }, { ScrollTrigger }] = await Promise.all([
+      import('./acerca-carousel.js'),
       import('./animations.js'),
       import('gsap/ScrollTrigger'),
     ]);
+    initAcercaCarousel();
     initAnimations();
     ScrollTrigger.refresh();
   } catch (e) {}

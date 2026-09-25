@@ -1108,13 +1108,34 @@ body {
   font-weight: 300;
 }
 
+.acerca-carousel {
+  position: relative;
+  --ac-gap: 1.25rem;
+  --ac-visible: 4;
+}
+
 .acerca-gallery {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
+  overflow: hidden;
+  padding: 0.35rem 0 0.5rem;
+}
+
+.acerca-track {
+  display: flex;
+  gap: var(--ac-gap);
+  will-change: transform;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.acerca-track.is-dragging {
+  cursor: grabbing;
+  transition: none !important;
 }
 
 .acerca-item {
+  flex: 0 0 calc((100% - (var(--ac-visible) - 1) * var(--ac-gap)) / var(--ac-visible));
   position: relative;
   border-radius: var(--radius);
   overflow: hidden;
@@ -1161,13 +1182,6 @@ body {
 
 .acerca-item:hover::after {
   opacity: 1;
-}
-
-@media (max-width: 768px) {
-  .acerca-gallery {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-  }
 }
 
 /* ─── STEPS ─── */
@@ -1534,4 +1548,97 @@ footer {
   .filter-bar { margin-top: -0.5rem; }
   .filter-chip { padding: 0.45rem 0.9rem; font-size: 0.78rem; }
   .card-reveal p { font-size: 0.78rem; }
+}
+
+/* ═══ BLOQUE 6 — CARRUSEL ACERCA ═══ */
+.acerca-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(239, 173, 209, 0.55);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--rose-dark, #b8557f);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+  transform: translateY(-50%);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.acerca-nav:hover {
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2);
+}
+
+.acerca-nav:active {
+  background: var(--rose);
+  color: #fff;
+}
+
+.acerca-nav:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
+}
+
+.acerca-prev { left: 14px; }
+.acerca-next { right: 14px; }
+
+.acerca-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.4rem;
+}
+
+.acerca-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 100px;
+  background: rgba(184, 85, 127, 0.3);
+  cursor: pointer;
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.35s ease;
+}
+
+.acerca-dot:hover {
+  background: rgba(184, 85, 127, 0.6);
+}
+
+.acerca-dot[aria-selected='true'] {
+  width: 28px;
+  background: var(--rose);
+}
+
+.acerca-dot:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
+}
+
+@media (max-width: 1024px) {
+  .acerca-carousel { --ac-visible: 3; }
+}
+
+@media (max-width: 768px) {
+  .acerca-carousel { --ac-gap: 0.75rem; --ac-visible: 1.5; }
+
+  .acerca-nav {
+    width: 36px;
+    height: 36px;
+    font-size: 1.25rem;
+    background: rgba(255, 255, 255, 0.78);
+  }
+
+  .acerca-prev { left: 8px; }
+  .acerca-next { right: 8px; }
 }
