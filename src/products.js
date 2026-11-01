@@ -18,10 +18,15 @@ let ALL_PRODUCTS = [];
 let activeFilter = 'producto';
 
 const FILTERS = [
-  { key: 'producto', label: 'Producto' },
+  { key: 'producto', label: 'Cuidado capilar' },
   { key: 'viajero', label: 'Kit Viajero' },
   { key: 'accesorio', label: 'Accesorios' },
 ];
+
+const minPrice = (p) => Array.isArray(p.prices) && p.prices.length
+  ? Math.min(...p.prices.map(pr => pr.price))
+  : null;
+const money = (n) => '$' + Number(n).toLocaleString('es-CO');
 
 export async function renderProducts() {
   try {
@@ -35,11 +40,10 @@ export async function renderProducts() {
       if (groups[cat]) groups[cat].push(p);
     });
 
-    fillGrid('grid-productos', groups.producto);
-    fillGrid('grid-viajeros', groups.viajero);
-    fillGrid('grid-accesorios', groups.accesorio);
-
-    renderFilterBar();
+    fillGrid('grid-productos', groups[activeFilter]);
+    renderFilterBar(groups);
+    renderKitFeature(groups.viajero[0]);
+    renderBestseller(products);
 
     document.dispatchEvent(new CustomEvent('cart-update'));
     return products;
@@ -57,25 +61,106 @@ function fillGrid(id, items) {
     : `<p class="empty-cat" style="grid-column:1/-1;text-align:center;color:#999;padding:2rem">Próximamente</p>`;
 }
 
-function renderFilterBar() {
+function productData(p) {
+  return {
+    id: p.id, name: p.name, desc: p.desc_larga || p.desc || '',
+    images: Array.isArray(p.images) ? p.images : [p.image || ''].filter(Boolean),
+    prices: p.prices,
+  };
+}
+
+// JSON listo para un atributo HTML con comillas simples
+function productPayload(p) {
+  return JSON.stringify(productData(p)).replace(/&/g, '&amp;').replace(/'/g, '&#39;');
+}
+
+function addControl(p) {
+  const prices = Array.isArray(p.prices) ? p.prices : [];
+  if (prices.length === 1) {
+    return `<div class="cart-qty-ctrl" data-id="${esc(p.id)}" data-label="${esc(prices[0].label)}" data-price="${prices[0].price}"></div>`;
+  }
+  return prices.length > 1 ? `<button class="add-cart-btn" type="button">Añadir</button>` : '';
+}
+
+// Kit Viajero: banner destacado a lo ancho en lugar de una grilla con una sola tarjeta
+function renderKitFeature(p) {
+  const el = document.getElementById('kitFeature');
+  if (!el) return;
+  if (!p) { el.hidden = true; return; }
+  const images = Array.isArray(p.images) ? p.images : [p.image].filter(Boolean);
+  const price = minPrice(p);
+  const sizes = (p.prices || []).map(pr => `<span class="size-tag">${esc(pr.label)}</span>`).join('');
+  el.dataset.product = JSON.stringify(productData(p));
+  el.innerHTML = `
+    <button type="button" class="kit-media kit-details" aria-label="Ver detalles de ${esc(p.name)}">
+      <img src="${optImg(images[0] || '', 1200)}" alt="${esc(p.name)}" loading="lazy" decoding="async">
+    </button>
+    <div class="kit-body">
+      <span class="section-number">02 — Edición viajera</span>
+      <h2>${esc(p.name)}</h2>
+      <p class="kit-tagline">Tu rutina capilar donde vayas</p>
+      ${p.desc ? `<p class="kit-desc">${esc(p.desc)}</p>` : ''}
+      ${sizes ? `<div class="kit-sizes">${sizes}</div>` : ''}
+      ${price !== null ? `<div class="kit-price">${money(price)}</div>` : ''}
+      <div class="kit-actions">
+        ${addControl(p)}
+        <button type="button" class="btn-ghost kit-details">Ver detalles</button>
+      </div>
+    </div>`;
+  el.hidden = false;
+}
+
+// Tarjeta flotante del hero con el producto marcado como "Más vendido"
+function renderBestseller(products) {
+  const box = document.getElementById('heroBestseller');
+  if (!box) return;
+  const best = products.find(p => /vendid/i.test(p.badge || ''));
+  if (!best) return;
+  document.getElementById('heroBestName').textContent = best.name || '';
+  const price = minPrice(best);
+  document.getElementById('heroBestPrice').textContent = price !== null ? 'Desde ' + money(price) : '';
+  box.hidden = false;
+}
+
+export function setCatalogFilter(key) {
+  if (!FILTERS.some(f => f.key === key)) return;
+  const bar = document.getElementById('filterBar');
+  if (bar) bar.querySelectorAll('.filter-chip').forEach(c => {
+    const on = c.dataset.filter === key;
+    c.classList.toggle('active', on);
+    c.setAttribute('aria-pressed', String(on));
+  });
+  if (key === activeFilter) return;
+  activeFilter = key;
+  applyFilter();
+}
+
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('[data-filter-link]');
+  if (link) setCatalogFilter(link.dataset.filterLink);
+});
+
+function renderFilterBar(groups = {}) {
   const grid = document.getElementById('grid-productos');
   if (!grid || document.getElementById('filterBar')) return;
 
   const bar = document.createElement('div');
   bar.className = 'filter-bar';
   bar.id = 'filterBar';
-  bar.innerHTML = FILTERS.map(
-    f => `<button class="filter-chip${f.key === activeFilter ? ' active' : ''}" data-filter="${f.key}">${f.label}</button>`
-  ).join('');
+  bar.setAttribute('role', 'group');
+  bar.setAttribute('aria-label', 'Filtrar por categoría');
+  bar.innerHTML = FILTERS.map(f => {
+    const on = f.key === activeFilter;
+    const count = (groups[f.key] || []).length;
+    return `<button type="button" class="filter-chip${on ? ' active' : ''}" data-filter="${f.key}" aria-pressed="${on}">${f.label}<span class="chip-count">${count}</span></button>`;
+  }).join('');
 
   grid.parentElement.insertBefore(bar, grid);
 
   bar.addEventListener('click', e => {
     const chip = e.target.closest('.filter-chip');
-    if (!chip || chip.dataset.filter === activeFilter) return;
-    activeFilter = chip.dataset.filter;
-    bar.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c === chip));
-    applyFilter();
+    if (!chip) return;
+    setCatalogFilter(chip.dataset.filter);
   });
 }
 
@@ -112,20 +197,13 @@ function renderCard(p) {
     ? `$${Math.min(...p.prices.map(pr => pr.price)).toLocaleString('es-CO')}`
     : '';
 
-  const prices = Array.isArray(p.prices) ? p.prices : [];
-  const single = prices.length === 1 ? prices[0] : null;
-
-  const addBtn = single
-    ? `<div class="cart-qty-ctrl" data-id="${p.id}" data-label="${esc(single.label)}" data-price="${single.price}"></div>`
-    : prices.length > 1
-      ? `<button class="add-cart-btn">Añadir</button>`
-      : '';
+  const addBtn = addControl(p);
 
   const badge = p.badge ? `<span class="card-badge">${esc(p.badge)}</span>` : '';
   const reveal = p.desc ? `<div class="card-reveal"><p>${esc(p.desc)}</p></div>` : '';
 
   return `
-    <div class="product-card" data-product='${JSON.stringify({ id: p.id, name: p.name, desc: p.desc_larga || p.desc || '', images: Array.isArray(p.images) ? p.images : [p.image || ''].filter(Boolean), prices: p.prices }).replace(/&/g, '&amp;').replace(/'/g, '&#39;')}'>
+    <div class="product-card" data-product='${productPayload(p)}'>
       <div class="card-image-wrap">
         <img src="${optImg(firstImg)}" alt="${esc(p.name)}" loading="lazy" decoding="async">
         ${badge}
@@ -142,6 +220,15 @@ function renderCard(p) {
     </div>
   `;
 }
+
+document.addEventListener('click', (e) => {
+  const trigger = e.target.closest('.kit-details');
+  if (!trigger) return;
+  const kit = trigger.closest('.kit-feature');
+  let data;
+  try { data = JSON.parse(kit.dataset.product); } catch {}
+  if (data) openProductModal(data, Array.isArray(data.images) ? data.images : [], 0);
+});
 
 const isCoarse = window.matchMedia('(hover: none), (pointer: coarse)').matches;
 
@@ -164,7 +251,8 @@ document.addEventListener('click', (e) => {
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('.qty-btn, .add-cart-btn');
   if (!btn) return;
-  const card = btn.closest('.product-card');
+  const card = btn.closest('.product-card, .kit-feature');
+  if (!card) return;
   let productData;
   try { productData = JSON.parse(card.dataset.product); } catch {}
   if (!productData) return;

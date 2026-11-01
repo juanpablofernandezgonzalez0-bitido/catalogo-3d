@@ -53,8 +53,8 @@ api.forEach((p) => { const c = p.category || 'producto'; byCat[c] = (byCat[c] ||
 // ── BLOCK 5: filters ──
 const chips = await page.locator('#filterBar .filter-chip').count();
 ok('Filtros: 3 chips', chips === 3, `got ${chips}`);
-const activeTxt = (await page.locator('#filterBar .filter-chip.active').innerText()).trim();
-ok('Filtro activo por defecto = Producto', activeTxt === 'Producto', activeTxt);
+const activeTxt = await page.locator('#filterBar .filter-chip.active').getAttribute('data-filter');
+ok('Filtro activo por defecto = producto', activeTxt === 'producto', activeTxt);
 let n = await page.locator('#grid-productos .product-card').count();
 ok('Grilla default = productos', n === byCat.producto, `got ${n} want ${byCat.producto}`);
 

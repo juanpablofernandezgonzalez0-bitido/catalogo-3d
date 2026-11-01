@@ -278,7 +278,7 @@ function setupNav() {
     });
   });
 
-  const sections2 = document.querySelectorAll('.section-product, .section-acerca');
+  const sections2 = document.querySelectorAll('.section-product, .section-acerca, .kit-section');
   const updateActiveLink = () => {
     let current = '';
     sections2.forEach(sec => {
@@ -288,7 +288,7 @@ function setupNav() {
       }
     });
     navLinks.forEach(a => {
-      a.classList.toggle('active', a.getAttribute('href') === current);
+      a.classList.toggle('active', !a.dataset.filterLink && a.getAttribute('href') === current);
     });
   };
 

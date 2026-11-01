@@ -36,7 +36,7 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1" defer></script>
     <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
   </head>
@@ -50,9 +50,9 @@
             <img src="https://res.cloudinary.com/dkz2x6emo/image/upload/e_trim/f_auto,q_auto:best,h_96/v1783451763/masss_catalog/misc/logo.png" alt="MASSS CABELLOS" width="140" height="44">
           </a>
           <div class="nav-links" id="navLinks">
-            <a href="#productos">Productos</a>
+            <a href="#productos">Catálogo</a>
             <a href="#viajeros">Kit Viajero</a>
-            <a href="#accesorios">Accesorios</a>
+            <a href="#productos" data-filter-link="accesorio">Accesorios</a>
             <a href="#acerca">Acerca</a>
             <a href="#videos">Videos</a>
             <a href="#compra">Compra</a>
@@ -70,33 +70,45 @@
       <section id="hero">
         <div class="hero-inner">
           <div class="hero-text">
+            <img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto:best,w_1000/v1783451763/masss_catalog/misc/logo.png" alt="MASSS CABELLOS" class="hero-logo" fetchpriority="high" decoding="async">
             <span class="hero-badge">Catálogo 2026</span>
-            <h1 class="sr-only">MASSS CABELLOS — Te hace feliz</h1>
-            <img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto:best,w_1000/v1783451763/masss_catalog/misc/logo.png" alt="Massscabellos" class="hero-logo" fetchpriority="high" decoding="async">
-            <p class="hero-subtitle">Productos naturales para el cuidado capilar</p>
+            <h1 class="hero-title">Cabello sano,<br><em>naturalmente.</em></h1>
+            <p class="hero-subtitle">Shampoo, tratamientos y accesorios formulados con plantas naturales para nutrir y fortalecer tu cabello desde la raíz.</p>
             <div class="hero-actions">
-              <a href="#productos" class="btn-primary">Explorar productos</a>
+              <a href="#productos" class="btn-primary">Ver catálogo</a>
               <a href="https://wa.me/573128281634" target="_blank" rel="noopener" class="btn-ghost" data-wa>Escríbenos</a>
             </div>
-            <ul class="hero-trust" aria-label="Beneficios">
-              <li>🌿 Ingredientes naturales</li>
-              <li>🧴 Sin parabenos</li>
-              <li>💬 Pedido por WhatsApp</li>
-            </ul>
           </div>
           <div class="hero-visual">
-            <img alt="Clientas felices con productos MASSS CABELLOS" loading="eager" fetchpriority="high" data-deco="hero">
+            <div class="hero-photo">
+              <img alt="Clientas felices con productos MASSS CABELLOS" loading="eager" fetchpriority="high" data-deco="hero">
+            </div>
+            <div class="hero-float hero-float-top" aria-hidden="true">
+              <span class="hero-float-icon">🌿</span>
+              <span><strong>100% plantas naturales</strong><small>Sin parabenos</small></span>
+            </div>
+            <a href="#productos" class="hero-float hero-float-bottom" id="heroBestseller" hidden>
+              <span class="hero-float-icon">★</span>
+              <span><small>Más vendido</small><strong id="heroBestName"></strong><em id="heroBestPrice"></em></span>
+            </a>
           </div>
         </div>
         <canvas id="three-canvas"></canvas>
       </section>
 
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee-track">
+          <span>Ingredientes naturales</span><span>✦</span><span>Sin parabenos</span><span>✦</span><span>Para todo tipo de cabello</span><span>✦</span><span>Pedidos por WhatsApp</span><span>✦</span><span>Transferencia o efectivo</span><span>✦</span>
+          <span>Ingredientes naturales</span><span>✦</span><span>Sin parabenos</span><span>✦</span><span>Para todo tipo de cabello</span><span>✦</span><span>Pedidos por WhatsApp</span><span>✦</span><span>Transferencia o efectivo</span><span>✦</span>
+        </div>
+      </div>
+
       <section id="productos" class="section-product">
         <div class="container">
           <div class="section-header">
-            <span class="section-number">01</span>
-            <h2>Productos</h2>
-            <p>Nuestra línea completa para el cuidado capilar</p>
+            <span class="section-number">01 — Catálogo</span>
+            <h2>Nuestros productos</h2>
+            <p>Elige por categoría y arma tu pedido</p>
           </div>
           <div class="product-grid" id="grid-productos"></div>
         </div>
@@ -115,14 +127,9 @@
         </div>
       </div>
 
-      <section id="viajeros" class="section-product">
+      <section id="viajeros" class="kit-section">
         <div class="container">
-          <div class="section-header">
-            <span class="section-number">02</span>
-            <h2>Kit Viajero</h2>
-            <p>Tu rutina capilar donde vayas</p>
-          </div>
-          <div class="product-grid" id="grid-viajeros"></div>
+          <div class="kit-feature" id="kitFeature" hidden></div>
         </div>
       </section>
 
@@ -139,21 +146,10 @@
         </div>
       </div>
 
-      <section id="accesorios" class="section-product">
-        <div class="container">
-          <div class="section-header">
-            <span class="section-number">03</span>
-            <h2>Accesorios</h2>
-            <p>Complementos para el cuidado de tu cabello</p>
-          </div>
-          <div class="product-grid" id="grid-accesorios"></div>
-        </div>
-      </section>
-
       <section id="acerca" class="section-acerca">
         <div class="container">
           <div class="section-header">
-            <span class="section-number">✦</span>
+            <span class="section-number">✦ Nuestra esencia</span>
             <h2>Acerca de nuestros productos</h2>
             <p>Un ritual de cuidado inspirado en la naturaleza</p>
           </div>
@@ -189,7 +185,7 @@
       <section id="videos" class="section-product">
         <div class="container">
           <div class="section-header" id="videos-header">
-            <span class="section-number">✦</span>
+            <span class="section-number">✦ En acción</span>
             <h2 id="videos-title">Videos</h2>
             <p id="videos-subtitle">Mira nuestros productos en acción</p>
           </div>
@@ -200,7 +196,7 @@
       <section id="compra" class="section-product">
         <div class="container">
           <div class="section-header">
-            <span class="section-number">04</span>
+            <span class="section-number">03 — Pedidos</span>
             <h2>¿Cómo comprar?</h2>
             <p>Tu pedido en pasos sencillos</p>
           </div>
@@ -235,7 +231,7 @@
             <h4>Catálogo</h4>
             <a href="#productos">Productos</a>
             <a href="#viajeros">Kit Viajero</a>
-            <a href="#accesorios">Accesorios</a>
+            <a href="#productos" data-filter-link="accesorio">Accesorios</a>
             <a href="#videos">Videos</a>
           </div>
           <div class="footer-col">
