@@ -43,7 +43,6 @@ export async function renderProducts() {
     fillGrid('grid-productos', groups[activeFilter]);
     renderFilterBar(groups);
     renderKitFeature(groups.viajero[0]);
-    renderBestseller(products);
 
     document.dispatchEvent(new CustomEvent('cart-update'));
     return products;
@@ -108,18 +107,6 @@ function renderKitFeature(p) {
       </div>
     </div>`;
   el.hidden = false;
-}
-
-// Tarjeta flotante del hero con el producto marcado como "Más vendido"
-function renderBestseller(products) {
-  const box = document.getElementById('heroBestseller');
-  if (!box) return;
-  const best = products.find(p => /vendid/i.test(p.badge || ''));
-  if (!best) return;
-  document.getElementById('heroBestName').textContent = best.name || '';
-  const price = minPrice(best);
-  document.getElementById('heroBestPrice').textContent = price !== null ? 'Desde ' + money(price) : '';
-  box.hidden = false;
 }
 
 export function setCatalogFilter(key) {
