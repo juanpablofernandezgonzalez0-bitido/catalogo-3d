@@ -1,4 +1,5 @@
 import express from 'express';
+import { timingSafeEqual, createHash } from 'node:crypto';
 import {
   getProducts, getProduct, createProduct, updateProduct,
   deleteProduct, reorderProducts, getDecoracion, saveDecoracion,
@@ -19,6 +20,27 @@ function cached(key, fn) {
 function invalidate(pattern) {
   for (const k of cache.keys()) { if (k.startsWith(pattern)) cache.delete(k); }
 }
+
+// ── Autenticación del panel admin ──
+// Toda petición que modifica datos (POST/PUT/PATCH/DELETE) exige el header
+// `Authorization: Bearer <ADMIN_PASSWORD>`. Las lecturas (GET) siguen públicas.
+const sha = (s) => createHash('sha256').update(String(s)).digest();
+function requireAdmin(req, res, next) {
+  if (req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS') return next();
+  const expected = process.env.ADMIN_PASSWORD;
+  if (!expected) {
+    return res.status(503).json({ error: 'ADMIN_PASSWORD no está configurado en el servidor' });
+  }
+  const header = req.get('authorization') || '';
+  const given = header.startsWith('Bearer ') ? header.slice(7) : '';
+  if (!given || !timingSafeEqual(sha(given), sha(expected))) {
+    return res.status(401).json({ error: 'No autorizado' });
+  }
+  next();
+}
+app.use('/api', requireAdmin);
+
+app.post('/api/login', (req, res) => res.json({ ok: true }));
 
 app.use((req, res, next) => {
   const timeout = setTimeout(() => {

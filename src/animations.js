@@ -165,16 +165,13 @@ export function initAnimations() {
     });
   });
 
-  // Product card entrance (existing)
-  const cards = document.querySelectorAll('.product-card');
-  cards.forEach((el, i) => {
-    ScrollTrigger.create({
-      trigger: el,
-      start: 'top 88%',
-      onEnter: () => {
-        setTimeout(() => el.classList.add('visible'), i * 80);
-      },
-    });
+  // Product card entrance — escalonado por grupo visible (no por índice global),
+  // así las tarjetas de secciones más abajo no esperan segundos en aparecer.
+  ScrollTrigger.batch('.product-card', {
+    start: 'top 92%',
+    onEnter: (batch) => {
+      batch.forEach((el, i) => setTimeout(() => el.classList.add('visible'), i * 70));
+    },
   });
 
   const kit = document.querySelector('.kit-showcase');
@@ -281,7 +278,7 @@ function setupNav() {
     });
   });
 
-  const sections2 = document.querySelectorAll('.section-product');
+  const sections2 = document.querySelectorAll('.section-product, .section-acerca');
   const updateActiveLink = () => {
     let current = '';
     sections2.forEach(sec => {

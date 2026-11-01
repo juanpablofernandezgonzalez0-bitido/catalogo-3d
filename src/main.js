@@ -31,7 +31,12 @@ try {
     initAcercaCarousel();
     initAnimations();
     ScrollTrigger.refresh();
-  } catch (e) {}
+  } catch (e) {
+    // Si las animaciones no cargan, mostramos el contenido igualmente
+    console.warn('Animations error:', e);
+    document.querySelectorAll('.product-card, .acerca-item, .step-card, .payment-box')
+      .forEach((el) => el.classList.add('visible'));
+  }
 
   try {
     const { renderVideos } = await import('./videos.js');

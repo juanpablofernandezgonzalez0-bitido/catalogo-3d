@@ -3,18 +3,52 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Massscabellos — Catálogo</title>
+    <title>MASSS CABELLOS — Productos naturales para el cuidado capilar</title>
+    <meta name="description" content="Catálogo MASSS CABELLOS: shampoo, acondicionadores, tratamientos, kits viajeros y accesorios hechos con plantas naturales. Pide fácil por WhatsApp.">
+    <meta name="theme-color" content="#fffbfc">
+    <link rel="canonical" href="https://catalogo-massscabellos.vercel.app/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dkz2x6emo/image/upload/f_png,w_180,h_180,c_pad,b_white/v1783451763/masss_catalog/misc/logo.png">
+
+    <!-- Open Graph / redes sociales -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_CO">
+    <meta property="og:site_name" content="MASSS CABELLOS">
+    <meta property="og:title" content="MASSS CABELLOS — Catálogo 2026">
+    <meta property="og:description" content="Productos naturales para el cuidado capilar. Explora el catálogo y pide por WhatsApp.">
+    <meta property="og:url" content="https://catalogo-massscabellos.vercel.app/">
+    <meta property="og:image" content="https://res.cloudinary.com/dkz2x6emo/image/upload/f_jpg,w_1200,h_630,c_pad,b_rgb:fffbfc/v1783451763/masss_catalog/misc/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Store",
+        "name": "MASSS CABELLOS",
+        "slogan": "Te hace feliz",
+        "description": "Productos naturales para el cuidado capilar",
+        "url": "https://catalogo-massscabellos.vercel.app/",
+        "logo": "https://res.cloudinary.com/dkz2x6emo/image/upload/v1783451763/masss_catalog/misc/logo.png",
+        "telephone": "+57 312 828 1634",
+        "paymentAccepted": "Transferencia, Efectivo",
+        "currenciesAccepted": "COP"
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1" defer></script>
     <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
   </head>
   <body>
-    <div id="loading"><div class="spinner"></div><p>Cargando catálogo...</p></div>
+    <a class="skip-link" href="#productos">Saltar al catálogo</a>
+    <div id="loading" aria-live="polite"><div class="spinner"></div><p>Cargando catálogo...</p></div>
     <div id="app">
-      <nav id="navbar">
+      <nav id="navbar" aria-label="Principal">
         <div class="nav-inner">
+          <a href="#hero" class="nav-brand" aria-label="MASSS CABELLOS — inicio">
+            <img src="https://res.cloudinary.com/dkz2x6emo/image/upload/e_trim/f_auto,q_auto:best,h_96/v1783451763/masss_catalog/misc/logo.png" alt="MASSS CABELLOS" width="140" height="44">
+          </a>
           <div class="nav-links" id="navLinks">
             <a href="#productos">Productos</a>
             <a href="#viajeros">Kit Viajero</a>
@@ -23,11 +57,11 @@
             <a href="#videos">Videos</a>
             <a href="#compra">Compra</a>
           </div>
-          <button class="cart-toggle" id="cartToggle" aria-label="Carrito">
+          <button class="cart-toggle" id="cartToggle" type="button" aria-label="Abrir carrito" aria-controls="cartDrawer">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
             <span class="cart-badge" id="cartBadge">0</span>
           </button>
-          <button class="nav-toggle" id="navToggle" aria-label="Menú">
+          <button class="nav-toggle" id="navToggle" type="button" aria-label="Abrir menú" aria-controls="navLinks" aria-expanded="false">
             <span></span><span></span><span></span>
           </button>
         </div>
@@ -37,12 +71,21 @@
         <div class="hero-inner">
           <div class="hero-text">
             <span class="hero-badge">Catálogo 2026</span>
+            <h1 class="sr-only">MASSS CABELLOS — Te hace feliz</h1>
             <img src="https://res.cloudinary.com/dkz2x6emo/image/upload/f_auto,q_auto:best,w_1000/v1783451763/masss_catalog/misc/logo.png" alt="Massscabellos" class="hero-logo" fetchpriority="high" decoding="async">
             <p class="hero-subtitle">Productos naturales para el cuidado capilar</p>
-            <a href="#productos" class="btn-primary">Explorar productos</a>
+            <div class="hero-actions">
+              <a href="#productos" class="btn-primary">Explorar productos</a>
+              <a href="https://wa.me/573128281634" target="_blank" rel="noopener" class="btn-ghost" data-wa>Escríbenos</a>
+            </div>
+            <ul class="hero-trust" aria-label="Beneficios">
+              <li>🌿 Ingredientes naturales</li>
+              <li>🧴 Sin parabenos</li>
+              <li>💬 Pedido por WhatsApp</li>
+            </ul>
           </div>
           <div class="hero-visual">
-            <img src="" alt="MASSS CABELLOS" loading="eager" data-deco="hero">
+            <img alt="Clientas felices con productos MASSS CABELLOS" loading="eager" fetchpriority="high" data-deco="hero">
           </div>
         </div>
         <canvas id="three-canvas"></canvas>
@@ -62,7 +105,7 @@
       <div class="editorial-banner">
         <div class="editorial-inner">
           <div class="editorial-image">
-            <img src="" alt="MASSS CABELLOS" loading="lazy" data-deco="banner1">
+            <img alt="Cuidado capilar natural MASSS CABELLOS" loading="lazy" data-deco="banner1">
           </div>
           <div class="editorial-text">
             <span class="editorial-label">Hecho con plantas naturales</span>
@@ -86,7 +129,7 @@
       <div class="editorial-banner banner-reverse">
         <div class="editorial-inner">
           <div class="editorial-image">
-            <img src="" alt="MASSS CABELLOS" loading="lazy" data-deco="banner2">
+            <img alt="Belleza sostenible MASSS CABELLOS" loading="lazy" data-deco="banner2">
           </div>
           <div class="editorial-text">
             <span class="editorial-label">Belleza sostenible</span>
@@ -175,25 +218,49 @@
               <span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Transferencia</span>
               <span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M9 9l3-3 3 3M9 15l3 3 3-3"/></svg> Efectivo</span>
             </div>
-            <a href="https://wa.me/573128281634" target="_blank" class="btn-primary" style="margin-top:0">
+            <a href="https://wa.me/573128281634" target="_blank" rel="noopener" class="btn-primary" style="margin-top:0" data-wa>
               Ordena por WhatsApp
             </a>
           </div>
         </div>
       </section>
 
-      <footer>
-        <div class="container">
-          <p>&copy; 2026 MASSS CABELLOS — Todos los derechos reservados</p>
+      <footer class="site-footer">
+        <div class="container footer-grid">
+          <div class="footer-brand">
+            <img src="https://res.cloudinary.com/dkz2x6emo/image/upload/e_trim/f_auto,q_auto:best,w_360/v1783451763/masss_catalog/misc/logo.png" alt="MASSS CABELLOS" width="180" height="56" loading="lazy">
+            <p>Productos naturales para el cuidado capilar. Formulados con extractos botánicos para nutrir, fortalecer y embellecer tu cabello.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Catálogo</h4>
+            <a href="#productos">Productos</a>
+            <a href="#viajeros">Kit Viajero</a>
+            <a href="#accesorios">Accesorios</a>
+            <a href="#videos">Videos</a>
+          </div>
+          <div class="footer-col">
+            <h4>Pedidos</h4>
+            <a href="#compra">¿Cómo comprar?</a>
+            <a href="https://wa.me/573128281634" target="_blank" rel="noopener" data-wa>WhatsApp +57 312 828 1634</a>
+            <span>Transferencia · Efectivo</span>
+          </div>
+        </div>
+        <div class="container footer-bottom">
+          <p>&copy; <span id="year">2026</span> MASSS CABELLOS — Todos los derechos reservados</p>
+          <p class="footer-slogan">Te hace feliz ✦</p>
         </div>
       </footer>
+
+      <a href="https://wa.me/573128281634" target="_blank" rel="noopener" class="wa-float" data-wa aria-label="Escríbenos por WhatsApp">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16.04 3C8.86 3 3.03 8.82 3.03 16c0 2.3.6 4.53 1.74 6.5L3 29l6.68-1.75A12.94 12.94 0 0 0 16.04 29C23.2 29 29 23.18 29 16S23.2 3 16.04 3zm0 23.6c-2 0-3.95-.54-5.65-1.55l-.4-.24-3.97 1.04 1.06-3.86-.26-.4A10.56 10.56 0 0 1 5.4 16c0-5.86 4.77-10.62 10.64-10.62 5.86 0 10.6 4.76 10.6 10.62 0 5.86-4.75 10.6-10.6 10.6zm5.82-7.95c-.32-.16-1.88-.93-2.17-1.03-.3-.11-.5-.16-.72.16-.21.32-.82 1.03-1 1.24-.19.21-.37.24-.69.08-.32-.16-1.35-.5-2.56-1.58-.95-.85-1.59-1.9-1.77-2.21-.19-.32-.02-.5.14-.65.14-.14.32-.37.48-.56.16-.18.21-.32.32-.53.1-.21.05-.4-.03-.56-.08-.16-.72-1.73-.98-2.37-.26-.62-.52-.54-.72-.55h-.61c-.21 0-.56.08-.85.4-.3.32-1.12 1.1-1.12 2.67s1.15 3.1 1.31 3.31c.16.21 2.26 3.45 5.47 4.84.77.33 1.36.53 1.83.67.77.25 1.47.21 2.02.13.62-.09 1.88-.77 2.15-1.51.26-.74.26-1.38.18-1.51-.08-.13-.29-.21-.61-.37z"/></svg>
+      </a>
     </div>
 
     <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
-    <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
       <div class="cart-header">
-        <h3>Tu pedido</h3>
-        <button class="cart-close" onclick="closeCart()">✕</button>
+        <h3 id="cartTitle">Tu pedido</h3>
+        <button class="cart-close" type="button" onclick="closeCart()" aria-label="Cerrar carrito">✕</button>
       </div>
       <div class="cart-body" id="cartBody">
         <div class="cart-empty">Tu carrito está vacío</div>
@@ -203,19 +270,19 @@
           <span>Total</span>
           <span id="cartTotal">$0</span>
         </div>
-        <a class="btn-primary cart-wa-btn" id="cartWABtn" href="#" target="_blank" style="width:100%;text-align:center;justify-content:center;margin-top:0">
+        <a class="btn-primary cart-wa-btn" id="cartWABtn" href="#" target="_blank" rel="noopener" style="width:100%;text-align:center;justify-content:center;margin-top:0">
           Pedir por WhatsApp
         </a>
       </div>
     </div>
 
-    <div class="cart-toast" id="cartToast"></div>
+    <div class="cart-toast" id="cartToast" role="status" aria-live="polite"></div>
 
-    <div class="lightbox" id="lightbox">
-      <button class="close" onclick="closeLightbox()">✕</button>
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lbName">
+      <button class="close" type="button" onclick="closeLightbox()" aria-label="Cerrar">✕</button>
       <div class="lightbox-content">
         <div class="lb-image-wrap">
-          <img id="lightboxImg" src="" alt="">
+          <img id="lightboxImg" alt="">
         </div>
         <div class="lb-info" id="lbInfo">
           <h2 id="lbName"></h2>
@@ -227,6 +294,9 @@
 
     <script type="module" src="/src/main.js"></script>
     <script>
+      const WA_NUMBER = '573128281634';
+      document.getElementById('year').textContent = new Date().getFullYear();
+
       fetch('/api/decoracion').then(r => r.json()).then(config => {
         document.querySelectorAll('[data-deco]').forEach(img => {
           const key = img.dataset.deco;
@@ -246,7 +316,9 @@
         _lbData = { id: product.id, images, idx: otherIdx, prices: product.prices || [] };
         const lb = document.getElementById('lightbox');
         const src = images[otherIdx] || '';
-        document.getElementById('lightboxImg').src = src.includes('cloudinary.com') ? src.replace('/upload/', '/upload/f_auto,q_auto:best,w_1600/') : src;
+        const lbImg = document.getElementById('lightboxImg');
+        lbImg.alt = product.name || '';
+        lbImg.src = src.includes('cloudinary.com') ? src.replace('/upload/', '/upload/f_auto,q_auto:best,w_1600/') : src;
         document.getElementById('lbName').textContent = product.name || '';
         document.getElementById('lbDesc').textContent = product.desc || '';
         const pricesEl = document.getElementById('lbPrices');
@@ -360,7 +432,7 @@
         document.getElementById('cartTotal').textContent = '$' + total.toLocaleString('es-CO');
         const lines = items.map(i => `• ${i.name} — ${i.label} x${i.qty} = $${(i.price * i.qty).toLocaleString('es-CO')}`);
         const waText = 'Hola, quiero pedir:\n\n' + lines.join('\n') + '\n\nTotal: $' + total.toLocaleString('es-CO');
-        document.getElementById('cartWABtn').href = 'https://wa.me/573128281634?text=' + encodeURIComponent(waText);
+        document.getElementById('cartWABtn').href = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(waText);
       }
 
       document.addEventListener('cart-added', (e) => {
@@ -441,8 +513,13 @@
       const toggle = document.getElementById('navToggle');
       const links = document.getElementById('navLinks');
       if (toggle) {
-        toggle.addEventListener('click', () => links.classList.toggle('open'));
-        links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+        const setOpen = (open) => {
+          links.classList.toggle('open', open);
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+        };
+        toggle.addEventListener('click', () => setOpen(!links.classList.contains('open')));
+        links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
       }
     </script>
   </body>

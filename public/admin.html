@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>Admin — MASSS CABELLOS</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -141,7 +142,8 @@
   <div class="header">
     <div>
       <h1>Panel de Administración</h1>
-      <a href="/" target="_blank">Ver catálogo →</a>
+      <a href="/" target="_blank" rel="noopener">Ver catálogo →</a>
+      <a href="#" onclick="adminLogout();return false" style="margin-left:1rem">Cerrar sesión</a>
     </div>
     <button class="btn" onclick="openEditor()">+ Nuevo Producto</button>
   </div>
@@ -256,6 +258,37 @@
   </div>
 
   <script>
+    // ── Autenticación: añade la contraseña de admin a toda petición que modifica datos ──
+    (() => {
+      const KEY = 'masss_admin_pw';
+      const nativeFetch = window.fetch.bind(window);
+      const getPw = () => { try { return sessionStorage.getItem(KEY) || ''; } catch { return ''; } };
+      const setPw = (v) => { try { v ? sessionStorage.setItem(KEY, v) : sessionStorage.removeItem(KEY); } catch {} };
+      const ask = (msg) => {
+        const v = prompt(msg || 'Contraseña de administrador:');
+        if (v) setPw(v);
+        return v;
+      };
+      window.fetch = async (input, init = {}) => {
+        const url = typeof input === 'string' ? input : input.url;
+        const method = (init.method || 'GET').toUpperCase();
+        const isWrite = url.startsWith('/api/') && method !== 'GET';
+        if (!isWrite) return nativeFetch(input, init);
+        for (let attempt = 0; attempt < 3; attempt++) {
+          let pw = getPw() || ask();
+          if (!pw) break;
+          const headers = new Headers(init.headers || {});
+          headers.set('Authorization', 'Bearer ' + pw);
+          const res = await nativeFetch(input, { ...init, headers });
+          if (res.status !== 401) return res;
+          setPw('');
+          ask('Contraseña incorrecta. Intenta de nuevo:');
+        }
+        return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+      };
+      window.adminLogout = () => { setPw(''); alert('Sesión cerrada'); };
+    })();
+
     let products = [];
     let cloudName = '';
     let uploadPreset = '';

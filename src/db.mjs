@@ -44,7 +44,7 @@ export async function getProducts() {
 }
 
 export async function getProduct(id) {
-  const rows = await supabase('GET', `products?id=eq.${id}&select=*`);
+  const rows = await supabase('GET', `products?id=eq.${encodeURIComponent(id)}&select=*`);
   return rows.length ? toProduct(rows[0]) : null;
 }
 
@@ -95,11 +95,11 @@ export async function createProduct(data) {
 export async function updateProduct(id, data) {
   let base;
   if (data.desc !== undefined || data.desc_larga !== undefined || data.badge !== undefined) {
-    const cur = await supabase('GET', `products?id=eq.${id}&select=description`);
+    const cur = await supabase('GET', `products?id=eq.${encodeURIComponent(id)}&select=description`);
     base = cur && cur[0] ? cur[0].description : undefined;
   }
   const body = toRow(data, base);
-  const [row] = await supabase('PATCH', `products?id=eq.${id}`, {
+  const [row] = await supabase('PATCH', `products?id=eq.${encodeURIComponent(id)}`, {
     body,
     headers: { 'Prefer': 'return=representation' },
   });
@@ -107,13 +107,13 @@ export async function updateProduct(id, data) {
 }
 
 export async function deleteProduct(id) {
-  await supabase('DELETE', `products?id=eq.${id}`);
+  await supabase('DELETE', `products?id=eq.${encodeURIComponent(id)}`);
 }
 
 export async function reorderProducts(orderedIds) {
   await supabase('PATCH', 'products?id=gte.', { body: { sort_order: -1 } });
   for (let i = 0; i < orderedIds.length; i++) {
-    await supabase('PATCH', `products?id=eq.${orderedIds[i]}`, { body: { sort_order: i } });
+    await supabase('PATCH', `products?id=eq.${encodeURIComponent(orderedIds[i])}`, { body: { sort_order: i } });
   }
 }
 
